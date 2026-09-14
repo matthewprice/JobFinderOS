@@ -33,11 +33,11 @@ JobFinderOS is a set of agent personas and skills that run inside [Claude Code](
   <sub><b>Coach</b>, the recruiter &nbsp;·&nbsp; <b>Scout</b>, the crawler &nbsp;·&nbsp; <b>Mark</b>, the market analyst</sub>
 </p>
 
-| Agent | What it does | What it can touch |
-|---|---|---|
+| Agent     | What it does                                                                                                                                                                                                                                                          | What it can touch                                      |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | **Coach** | The recruiter brain. Judges the pipeline, preps you for interviews, runs mock interviews, keeps your career stories, drafts outreach and cover letters in your voice, checks drafts for AI tells, writes a postmortem on every loss, and produces the morning digest. | Everything, including reading your Gmail. Never sends. |
-| **Scout** | The crawler. Scans your target companies' own careers pages, scores each role against your rubric, and logs the good ones as opportunity notes. | Web and the vault. No email. |
-| **Mark** | The market analyst. Tracks funding, leadership moves, new team build-outs, and job-title renames at the companies you care about, and tells Scout and Coach where to look next. | Web and the vault. No email. |
+| **Scout** | The crawler. Scans your target companies' own careers pages, scores each role against your rubric, and logs the good ones as opportunity notes.                                                                                                                       | Web and the vault. No email.                           |
+| **Mark**  | The market analyst. Tracks funding, leadership moves, new team build-outs, and job-title renames at the companies you care about, and tells Scout and Coach where to look next.                                                                                       | Web and the vault. No email.                           |
 
 > [!IMPORTANT]
 > **🔒 Privacy by Design**
@@ -70,17 +70,29 @@ claude auth login
 
 ### Step 2. Clone and install
 
-Paste this block as one piece:
+**macOS / Linux**
 
 ```bash
 git clone https://github.com/matthewprice/JobFinderOS.git
 cd JobFinderOS
-python3 -m venv .venv && source .venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 claude
 ```
 
-The two Python lines need Python 3.11 or newer. They only serve the optional scheduler and helper scripts, so if you never plan to schedule anything you can skip them and go straight to `claude`.
+**Windows PowerShell**
+
+```powershell
+git clone https://github.com/matthewprice/JobFinderOS.git
+cd JobFinderOS
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+claude
+```
+
+The Python setup needs Python 3.11 or newer. Python is only required for the optional scheduler and helper scripts, so if you never plan to schedule anything you can skip the virtual environment and dependency installation and go straight to `claude`.
 
 ### Step 3. Teach it who you are
 
@@ -94,12 +106,12 @@ This is a 15-minute conversation. It asks about your current role, what you want
 
 When it finishes you have four private files, all gitignored:
 
-| File | What it holds |
-|---|---|
-| `config/profile.md` | Who you are, targets, comp floor, location rules, exclusions, target companies with their careers-page URLs |
-| `config/scoring_rubric.md` | How to score a role from 1 to 10, weighted by what you said matters |
-| `config/wins.md` | Your wins in situation-task-action-result form, used in prep and cover letters |
-| `config/voice.md` | How you write, so drafts sound like you |
+| File                       | What it holds                                                                                               |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `config/profile.md`        | Who you are, targets, comp floor, location rules, exclusions, target companies with their careers-page URLs |
+| `config/scoring_rubric.md` | How to score a role from 1 to 10, weighted by what you said matters                                         |
+| `config/wins.md`           | Your wins in situation-task-action-result form, used in prep and cover letters                              |
+| `config/voice.md`          | How you write, so drafts sound like you                                                                     |
 
 ### Step 4. Run the first scan
 
@@ -113,20 +125,44 @@ Scout reads your target companies' careers pages, scores what it finds, and writ
 
 Each of these is independent. Add them when you want them.
 
-- **Obsidian.** Open `vault/` as a vault in [Obsidian](https://obsidian.md) to read the notes with working links. Any text editor works too.
-- **Gmail.** Connect Gmail as an MCP connector in claude.ai. Coach can then triage recruiter email, spot interview invitations, and detect rejections. It is instructed to read only; Section 5 explains what that rests on.
-- **A schedule (macOS only).** Drafts are copied to the clipboard with `pbcopy` and the scheduler uses launchd, so this part is Mac-specific. Elsewhere, drafts still land in the vault and you run the skills by hand.
+* **Obsidian.** Open `vault/` as a vault in [Obsidian](https://obsidian.md) to read the notes with working links. Any text editor works too.
+* **Gmail.** Connect Gmail as an MCP connector in claude.ai. Coach can then triage recruiter email, spot interview invitations, and detect rejections. It is instructed to read only; Section 5 explains what that rests on.
+* **A schedule.** The master scheduler supports macOS `launchd` and Windows Task Scheduler. Both run `scripts/scheduler_tick.py` on a repeating interval, every 30 minutes by default. The scheduler reads `config/scheduler.yaml` and decides whether `/jobs-daily`, `/mark-weekly`, or the weekday priority watch is due.
+
+  **macOS**
 
   ```bash
   bash scripts/JobFinderOS_install_launchd.sh
   ```
 
-  One LaunchAgent ticks every 30 minutes. When a window in `config/scheduler.yaml` comes due it runs `/jobs-daily` (every day), `/mark-weekly` (once a week), and a narrow weekday watch on your priority function. Your Mac has to be awake. A missed run catches up on the next tick. Runs are logged to `logs/` and mirrored to `vault/Automation/`.
+  **Windows PowerShell**
 
-  Check it is working:
+  ```powershell
+  .\scripts\JobFinderOS_install_windows_task.ps1
+  ```
+
+  On Windows, the task runs under the logged-in user's session. The computer must be awake for scheduled work to run. Re-running the installer refreshes the task definition.
+
+  A missed run catches up on the next scheduler tick. Runs are logged to `logs/` and mirrored to `vault/Automation/`.
+
+  Check the scheduler without running a Claude Code skill:
+
+  **macOS / Linux**
 
   ```bash
   python3 scripts/scheduler_tick.py --dry-run
+  ```
+
+  **Windows PowerShell**
+
+  ```powershell
+  python .\scripts\scheduler_tick.py --dry-run
+  Get-ScheduledTask -TaskName "JobFinderOS Scheduler"
+  ```
+
+  On macOS, you can also verify the local automation setup:
+
+  ```bash
   bash scripts/verify_local_automation.sh
   ```
 
@@ -198,15 +234,15 @@ The rule behind this is in Section 4.2. Short version: find a human first, apply
 
 ### Reading the vault
 
-| Note | When to read it |
-|---|---|
-| `vault/Dashboard.md` | Every morning. Funnel pulse, plays for today, live threads, aging applications. |
-| `vault/Strategy.md` | Weekly. Positioning, the objection log, funnel history, proof assets, deadline math. |
-| `vault/Daily Digests/` | The morning briefing for each day. |
-| `vault/Companies/<Company>/` | One profile per company plus one note per role, with contacts and a timeline. |
-| `vault/Tracking/` | Contacts, the email follow-up queue, the company index. |
-| `vault/Outreach Drafts/` | Every draft the coach has written. Nothing here has been sent. |
-| `vault/Market Intel/` | Weekly briefs, the market pulse, and the handoff file Mark writes for Scout. |
+| Note                         | When to read it                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------------------ |
+| `vault/Dashboard.md`         | Every morning. Funnel pulse, plays for today, live threads, aging applications.      |
+| `vault/Strategy.md`          | Weekly. Positioning, the objection log, funnel history, proof assets, deadline math. |
+| `vault/Daily Digests/`       | The morning briefing for each day.                                                   |
+| `vault/Companies/<Company>/` | One profile per company plus one note per role, with contacts and a timeline.        |
+| `vault/Tracking/`            | Contacts, the email follow-up queue, the company index.                              |
+| `vault/Outreach Drafts/`     | Every draft the coach has written. Nothing here has been sent.                       |
+| `vault/Market Intel/`        | Weekly briefs, the market pulse, and the handoff file Mark writes for Scout.         |
 
 ---
 
@@ -228,10 +264,10 @@ When the ladder comes up empty, the application is logged as cold. The system tr
 
 Everyone on the hiring side reads AI-written messages all day and is pattern-matching for them. One detected template can quietly end a conversation, and the people in your field talk to each other. So:
 
-- **Low volume by design.** At most 3 new people a day, 10 a week. At most 2 follow-ups per thread, then park it for 30 days. Never two similar messages to two people at one company.
-- **The two-fact rule.** Every outbound message carries one fact that took real work to find, with the source cited so you can read it first, and one thing only you could say. Missing either, it does not go. Silence beats generic.
-- **You send everything.** Drafts land on your clipboard with a "before you send" checklist and slots you have to fill in your own words. The agents never send, never schedule, never create a Gmail draft.
-- **The voice gate.** Nothing drafted for you may read as AI-written. No em dashes, no "I hope this finds you well," no perfectly balanced three-part sentences, no flattery openers. `/voice-check` enforces it.
+* **Low volume by design.** At most 3 new people a day, 10 a week. At most 2 follow-ups per thread, then park it for 30 days. Never two similar messages to two people at one company.
+* **The two-fact rule.** Every outbound message carries one fact that took real work to find, with the source cited so you can read it first, and one thing only you could say. Missing either, it does not go. Silence beats generic.
+* **You send everything.** Drafts land on your clipboard with a "before you send" checklist and slots you have to fill in your own words. The agents never send, never schedule, never create a Gmail draft.
+* **The voice gate.** Nothing drafted for you may read as AI-written. No em dashes, no "I hope this finds you well," no perfectly balanced three-part sentences, no flattery openers. `/voice-check` enforces it.
 
 ### 4.4 Silence is data
 
@@ -283,15 +319,26 @@ Your profile, rubric, wins, stories, voice notes, and vault contents are gitigno
 
 ### Retention
 
-Daily digests, run summaries, and daily briefs keep 30 days. Weekly briefs keep 90. A weekly launchd job prunes the rest. The vault is gitignored here, so if you want a permanent archive, back it up to a private repository of your own. Anything worth keeping lives in `Strategy.md`, `Tracking/`, or `Companies/`, never in an old digest.
+Daily digests, run summaries, and daily briefs keep 30 days. Weekly briefs keep 90. On macOS, a weekly launchd helper can prune the rest. The vault is gitignored here, so if you want a permanent archive, back it up to a private repository of your own. Anything worth keeping lives in `Strategy.md`, `Tracking/`, or `Companies/`, never in an old digest.
 
 ### Manual runs and logs
 
+**macOS / Linux**
+
 ```bash
-python3 scripts/scheduler_tick.py --dry-run             # what would run right now
-bash scripts/JobFinderOS_run_skill.sh jobs-daily jobs-daily   # run one skill the way the scheduler does
-bash scripts/JobFinderOS_check_local_runner.sh          # is Claude Code reachable from launchd?
-tail -f logs/launchd-runs.log                            # watch runs
+python3 scripts/scheduler_tick.py --dry-run                   # what would run right now
+python3 scripts/jobfinderos_run_skill.py jobs-daily jobs-daily # run one skill through the portable runner
+bash scripts/JobFinderOS_check_local_runner.sh                # is Claude Code reachable from launchd?
+tail -f logs/launchd-runs.log                                 # watch runs
+```
+
+**Windows PowerShell**
+
+```powershell
+python .\scripts\scheduler_tick.py --dry-run
+python .\scripts\jobfinderos_run_skill.py jobs-daily jobs-daily
+Get-ScheduledTask -TaskName "JobFinderOS Scheduler"
+Get-Content .\logs\launchd-runs.log -Tail 20
 ```
 
 ### Credits
@@ -312,9 +359,9 @@ Issues and pull requests are welcome. Bug reports, wording fixes, and "this clai
 
 The most valuable contribution is a new skill. Each file in `.claude/commands/` is a short Markdown prompt: a `description` line in the frontmatter, an **Agent** line saying which of Coach, Scout, or Mark runs it, and a Task section. If you have built one that helped your own search, open a pull request with it. A few things to keep in mind:
 
-- **Keep it career-neutral.** Skills read `config/profile.md` for everything about the candidate. Nothing about a specific person, industry, or company belongs in a skill.
-- **Follow the playbook.** Warm path first, low outreach volume, a human in the loop on every message, and a Recruiter's read at the end. `config/recruiter_playbook.md` is the doctrine; a skill that fights it will not be merged.
-- **Never send.** Drafts go to the clipboard and the vault. No skill may send email, create Gmail drafts, or post anywhere on the candidate's behalf.
-- **Scrub before you push.** Check the diff for your own profile, wins, contacts, or vault notes. The `.gitignore` covers the usual paths, but a copied example can slip through.
+* **Keep it career-neutral.** Skills read `config/profile.md` for everything about the candidate. Nothing about a specific person, industry, or company belongs in a skill.
+* **Follow the playbook.** Warm path first, low outreach volume, a human in the loop on every message, and a Recruiter's read at the end. `config/recruiter_playbook.md` is the doctrine; a skill that fights it will not be merged.
+* **Never send.** Drafts go to the clipboard and the vault. No skill may send email, create Gmail drafts, or post anywhere on the candidate's behalf.
+* **Scrub before you push.** Check the diff for your own profile, wins, contacts, or vault notes. The `.gitignore` covers the usual paths, but a copied example can slip through.
 
 Say in the pull request what the skill is for, which agent runs it, and what it wrote to the vault when you ran it. MIT licensed, so contributions are too.
