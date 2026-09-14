@@ -171,37 +171,32 @@ def daily_is_due(
         return False
     return True
 
+def scheduler_env(root: Path) -> dict[str, str]:
+    """Return an environment with the project's virtualenv first on PATH."""
+    env = os.environ.copy()
+    venv_bin = root / ".venv" / ("Scripts" if os.name == "nt" else "bin")
+    env["PATH"] = f"{venv_bin}{os.pathsep}{env.get('PATH', '')}"
+    return env
 
 def run_skill(root: Path, label: str, skill: str) -> int:
-    env = os.environ.copy()
-    env["PATH"] = f"{root / '.venv' / 'bin'}:{env.get('PATH', '')}"
+    runner = root / "scripts" / "jobfinderos_run_skill.py"
     return subprocess.run(
-        ["/bin/bash", str(root / "scripts" / "JobFinderOS_run_skill.sh"), label, skill],
+        [sys.executable, str(runner), label, skill],
         cwd=str(root),
-        env=env,
+        env=scheduler_env(root),
     ).returncode
-
 
 def run_watch_guards(root: Path) -> None:
     """Invoke the priority-function watch guard; self-skips when not due."""
-    env = os.environ.copy()
-    env["PATH"] = f"{root / '.venv' / 'bin'}:{env.get('PATH', '')}"
     subprocess.run(
-        [sys.executable, str(root / "scripts" / "jobfinderos_priority_watch.py")],
+        [
+            sys.executable,
+            str(root / "scripts" / "jobfinderos_priority_watch.py"),
+        ],
         cwd=str(root),
-        env=env,
+        env=scheduler_env(root),
     )
 
-
-def run_script(root: Path, script: str) -> int:
-    path = root / "scripts" / script
-    env = os.environ.copy()
-    env["PATH"] = f"{root / '.venv' / 'bin'}:{env.get('PATH', '')}"
-    return subprocess.run(
-        ["/bin/bash", str(path)],
-        cwd=str(root),
-        env=env,
-    ).returncode
 
 def acquire_lock(lock_fp) -> bool:
     """Acquire a non-blocking scheduler lock on Windows or Unix."""
