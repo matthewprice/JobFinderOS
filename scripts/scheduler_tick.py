@@ -13,11 +13,16 @@ Rules:
 from __future__ import annotations
 
 import argparse
-import fcntl
 import json
 import os
 import subprocess
 import sys
+
+if os.name == "nt":
+    import msvcrt
+else:
+    import fcntl
+
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
@@ -198,6 +203,42 @@ def run_script(root: Path, script: str) -> int:
         env=env,
     ).returncode
 
+def acquire_lock(lock_fp) -> bool:
+    """Acquire a non-blocking scheduler lock on Windows or Unix."""
+    if os.name == "nt":
+        lock_fp.seek(0, os.SEEK_END)
+        if lock_fp.tell() == 0:
+            lock_fp.write(b"\0")
+            lock_fp.flush()
+
+        lock_fp.seek(0)
+        try:
+            msvcrt.locking(lock_fp.fileno(), msvcrt.LK_NBLCK, 1)
+            return True
+        except OSError:
+            return False
+
+    try:
+        fcntl.flock(lock_fp.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        return True
+    except BlockingIOError:
+        return False
+
+
+def release_lock(lock_fp) -> None:
+    """Release the scheduler lock."""
+    if os.name == "nt":
+        lock_fp.seek(0)
+        try:
+            msvcrt.locking(lock_fp.fileno(), msvcrt.LK_UNLCK, 1)
+        except OSError:
+            pass
+        return
+
+    try:
+        fcntl.flock(lock_fp.fileno(), fcntl.LOCK_UN)
+    except OSError:
+        pass
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="JobFinderOS scheduler tick")
@@ -208,12 +249,15 @@ def main() -> int:
     root = project_root()
     cfg_path = args.config or (root / "config" / "scheduler.yaml")
 
-    lock_fp = open(lock_path(), "a+", encoding="utf-8")
-    try:
-        fcntl.flock(lock_fp.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except BlockingIOError:
+    lock_fp = open(lock_path(), "a+b")
+    if not acquire_lock(lock_fp):
+
         append_run_log(root, "scheduler-tick", "skipped (lock held)")
-        print("scheduler_tick: another instance is running; exit 0", file=sys.stderr)
+        print(
+            "scheduler_tick: another instance is running; exit 0",
+            file=sys.stderr,
+        )
+        lock_fp.close()
         return 0
 
     try:
@@ -276,12 +320,8 @@ def main() -> int:
         run_watch_guards(root)
         return exit_rc
     finally:
-        try:
-            fcntl.flock(lock_fp.fileno(), fcntl.LOCK_UN)
-        except OSError:
-            pass
+        release_lock(lock_fp)
         lock_fp.close()
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
