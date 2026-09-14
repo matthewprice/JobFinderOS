@@ -70,17 +70,29 @@ claude auth login
 
 ### Step 2. Clone and install
 
-Paste this block as one piece:
+**macOS / Linux**
 
 ```bash
 git clone https://github.com/matthewprice/JobFinderOS.git
 cd JobFinderOS
-python3 -m venv .venv && source .venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 claude
 ```
 
-The two Python lines need Python 3.11 or newer. They only serve the optional scheduler and helper scripts, so if you never plan to schedule anything you can skip them and go straight to `claude`.
+**Windows PowerShell**
+
+```powershell
+git clone https://github.com/matthewprice/JobFinderOS.git
+cd JobFinderOS
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+claude
+```
+
+The Python setup needs Python 3.11 or newer. Python is only required for the optional scheduler and helper scripts, so if you never plan to schedule anything you can skip the virtual environment and dependency installation and go straight to `claude`.
 
 ### Step 3. Teach it who you are
 
@@ -115,18 +127,42 @@ Each of these is independent. Add them when you want them.
 
 - **Obsidian.** Open `vault/` as a vault in [Obsidian](https://obsidian.md) to read the notes with working links. Any text editor works too.
 - **Gmail.** Connect Gmail as an MCP connector in claude.ai. Coach can then triage recruiter email, spot interview invitations, and detect rejections. It is instructed to read only; Section 5 explains what that rests on.
-- **A schedule (macOS only).** Drafts are copied to the clipboard with `pbcopy` and the scheduler uses launchd, so this part is Mac-specific. Elsewhere, drafts still land in the vault and you run the skills by hand.
+- **A schedule.** The master scheduler supports macOS `launchd` and Windows Task Scheduler. Both run `scripts/scheduler_tick.py` on a repeating interval, every 30 minutes by default. The scheduler reads `config/scheduler.yaml` and decides whether `/jobs-daily`, `/mark-weekly`, or the weekday priority watch is due.
+
+  **macOS**
 
   ```bash
   bash scripts/JobFinderOS_install_launchd.sh
   ```
 
-  One LaunchAgent ticks every 30 minutes. When a window in `config/scheduler.yaml` comes due it runs `/jobs-daily` (every day), `/mark-weekly` (once a week), and a narrow weekday watch on your priority function. Your Mac has to be awake. A missed run catches up on the next tick. Runs are logged to `logs/` and mirrored to `vault/Automation/`.
+  **Windows PowerShell**
 
-  Check it is working:
+  ```powershell
+  .\scripts\JobFinderOS_install_windows_task.ps1
+  ```
+
+  On Windows, the task runs under the logged-in user's session. The computer must be awake for scheduled work to run. Re-running the installer refreshes the task definition.
+
+  A missed run catches up on the next scheduler tick. Runs are logged to `logs/` and mirrored to `vault/Automation/`.
+
+  Check the scheduler without running a Claude Code skill:
+
+  **macOS / Linux**
 
   ```bash
   python3 scripts/scheduler_tick.py --dry-run
+  ```
+
+  **Windows PowerShell**
+
+  ```powershell
+  python .\scripts\scheduler_tick.py --dry-run
+  Get-ScheduledTask -TaskName "JobFinderOS Scheduler"
+  ```
+
+  On macOS, you can also verify the local automation setup:
+
+  ```bash
   bash scripts/verify_local_automation.sh
   ```
 
@@ -283,15 +319,26 @@ Your profile, rubric, wins, stories, voice notes, and vault contents are gitigno
 
 ### Retention
 
-Daily digests, run summaries, and daily briefs keep 30 days. Weekly briefs keep 90. A weekly launchd job prunes the rest. The vault is gitignored here, so if you want a permanent archive, back it up to a private repository of your own. Anything worth keeping lives in `Strategy.md`, `Tracking/`, or `Companies/`, never in an old digest.
+Daily digests, run summaries, and daily briefs keep 30 days. Weekly briefs keep 90. On macOS, a weekly launchd helper can prune the rest. The vault is gitignored here, so if you want a permanent archive, back it up to a private repository of your own. Anything worth keeping lives in `Strategy.md`, `Tracking/`, or `Companies/`, never in an old digest.
 
 ### Manual runs and logs
 
+**macOS / Linux**
+
 ```bash
-python3 scripts/scheduler_tick.py --dry-run             # what would run right now
-bash scripts/JobFinderOS_run_skill.sh jobs-daily jobs-daily   # run one skill the way the scheduler does
-bash scripts/JobFinderOS_check_local_runner.sh          # is Claude Code reachable from launchd?
-tail -f logs/launchd-runs.log                            # watch runs
+python3 scripts/scheduler_tick.py --dry-run                   # what would run right now
+python3 scripts/jobfinderos_run_skill.py jobs-daily jobs-daily # run one skill through the portable runner
+bash scripts/JobFinderOS_check_local_runner.sh                # is Claude Code reachable from launchd?
+tail -f logs/launchd-runs.log                                 # watch runs
+```
+
+**Windows PowerShell**
+
+```powershell
+python .\scripts\scheduler_tick.py --dry-run
+python .\scripts\jobfinderos_run_skill.py jobs-daily jobs-daily
+Get-ScheduledTask -TaskName "JobFinderOS Scheduler"
+Get-Content .\logs\launchd-runs.log -Tail 20
 ```
 
 ### Credits
