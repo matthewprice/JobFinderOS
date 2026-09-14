@@ -33,11 +33,11 @@ JobFinderOS is a set of agent personas and skills that run inside [Claude Code](
   <sub><b>Coach</b>, the recruiter &nbsp;·&nbsp; <b>Scout</b>, the crawler &nbsp;·&nbsp; <b>Mark</b>, the market analyst</sub>
 </p>
 
-| Agent     | What it does                                                                                                                                                                                                                                                          | What it can touch                                      |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Agent | What it does | What it can touch |
+|---|---|---|
 | **Coach** | The recruiter brain. Judges the pipeline, preps you for interviews, runs mock interviews, keeps your career stories, drafts outreach and cover letters in your voice, checks drafts for AI tells, writes a postmortem on every loss, and produces the morning digest. | Everything, including reading your Gmail. Never sends. |
-| **Scout** | The crawler. Scans your target companies' own careers pages, scores each role against your rubric, and logs the good ones as opportunity notes.                                                                                                                       | Web and the vault. No email.                           |
-| **Mark**  | The market analyst. Tracks funding, leadership moves, new team build-outs, and job-title renames at the companies you care about, and tells Scout and Coach where to look next.                                                                                       | Web and the vault. No email.                           |
+| **Scout** | The crawler. Scans your target companies' own careers pages, scores each role against your rubric, and logs the good ones as opportunity notes. | Web and the vault. No email. |
+| **Mark** | The market analyst. Tracks funding, leadership moves, new team build-outs, and job-title renames at the companies you care about, and tells Scout and Coach where to look next. | Web and the vault. No email. |
 
 > [!IMPORTANT]
 > **🔒 Privacy by Design**
@@ -106,12 +106,12 @@ This is a 15-minute conversation. It asks about your current role, what you want
 
 When it finishes you have four private files, all gitignored:
 
-| File                       | What it holds                                                                                               |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `config/profile.md`        | Who you are, targets, comp floor, location rules, exclusions, target companies with their careers-page URLs |
-| `config/scoring_rubric.md` | How to score a role from 1 to 10, weighted by what you said matters                                         |
-| `config/wins.md`           | Your wins in situation-task-action-result form, used in prep and cover letters                              |
-| `config/voice.md`          | How you write, so drafts sound like you                                                                     |
+| File | What it holds |
+|---|---|
+| `config/profile.md` | Who you are, targets, comp floor, location rules, exclusions, target companies with their careers-page URLs |
+| `config/scoring_rubric.md` | How to score a role from 1 to 10, weighted by what you said matters |
+| `config/wins.md` | Your wins in situation-task-action-result form, used in prep and cover letters |
+| `config/voice.md` | How you write, so drafts sound like you |
 
 ### Step 4. Run the first scan
 
@@ -125,9 +125,9 @@ Scout reads your target companies' careers pages, scores what it finds, and writ
 
 Each of these is independent. Add them when you want them.
 
-* **Obsidian.** Open `vault/` as a vault in [Obsidian](https://obsidian.md) to read the notes with working links. Any text editor works too.
-* **Gmail.** Connect Gmail as an MCP connector in claude.ai. Coach can then triage recruiter email, spot interview invitations, and detect rejections. It is instructed to read only; Section 5 explains what that rests on.
-* **A schedule.** The master scheduler supports macOS `launchd` and Windows Task Scheduler. Both run `scripts/scheduler_tick.py` on a repeating interval, every 30 minutes by default. The scheduler reads `config/scheduler.yaml` and decides whether `/jobs-daily`, `/mark-weekly`, or the weekday priority watch is due.
+- **Obsidian.** Open `vault/` as a vault in [Obsidian](https://obsidian.md) to read the notes with working links. Any text editor works too.
+- **Gmail.** Connect Gmail as an MCP connector in claude.ai. Coach can then triage recruiter email, spot interview invitations, and detect rejections. It is instructed to read only; Section 5 explains what that rests on.
+- **A schedule.** The master scheduler supports macOS `launchd` and Windows Task Scheduler. Both run `scripts/scheduler_tick.py` on a repeating interval, every 30 minutes by default. The scheduler reads `config/scheduler.yaml` and decides whether `/jobs-daily`, `/mark-weekly`, or the weekday priority watch is due.
 
   **macOS**
 
@@ -234,15 +234,15 @@ The rule behind this is in Section 4.2. Short version: find a human first, apply
 
 ### Reading the vault
 
-| Note                         | When to read it                                                                      |
-| ---------------------------- | ------------------------------------------------------------------------------------ |
-| `vault/Dashboard.md`         | Every morning. Funnel pulse, plays for today, live threads, aging applications.      |
-| `vault/Strategy.md`          | Weekly. Positioning, the objection log, funnel history, proof assets, deadline math. |
-| `vault/Daily Digests/`       | The morning briefing for each day.                                                   |
-| `vault/Companies/<Company>/` | One profile per company plus one note per role, with contacts and a timeline.        |
-| `vault/Tracking/`            | Contacts, the email follow-up queue, the company index.                              |
-| `vault/Outreach Drafts/`     | Every draft the coach has written. Nothing here has been sent.                       |
-| `vault/Market Intel/`        | Weekly briefs, the market pulse, and the handoff file Mark writes for Scout.         |
+| Note | When to read it |
+|---|---|
+| `vault/Dashboard.md` | Every morning. Funnel pulse, plays for today, live threads, aging applications. |
+| `vault/Strategy.md` | Weekly. Positioning, the objection log, funnel history, proof assets, deadline math. |
+| `vault/Daily Digests/` | The morning briefing for each day. |
+| `vault/Companies/<Company>/` | One profile per company plus one note per role, with contacts and a timeline. |
+| `vault/Tracking/` | Contacts, the email follow-up queue, the company index. |
+| `vault/Outreach Drafts/` | Every draft the coach has written. Nothing here has been sent. |
+| `vault/Market Intel/` | Weekly briefs, the market pulse, and the handoff file Mark writes for Scout. |
 
 ---
 
@@ -264,10 +264,10 @@ When the ladder comes up empty, the application is logged as cold. The system tr
 
 Everyone on the hiring side reads AI-written messages all day and is pattern-matching for them. One detected template can quietly end a conversation, and the people in your field talk to each other. So:
 
-* **Low volume by design.** At most 3 new people a day, 10 a week. At most 2 follow-ups per thread, then park it for 30 days. Never two similar messages to two people at one company.
-* **The two-fact rule.** Every outbound message carries one fact that took real work to find, with the source cited so you can read it first, and one thing only you could say. Missing either, it does not go. Silence beats generic.
-* **You send everything.** Drafts land on your clipboard with a "before you send" checklist and slots you have to fill in your own words. The agents never send, never schedule, never create a Gmail draft.
-* **The voice gate.** Nothing drafted for you may read as AI-written. No em dashes, no "I hope this finds you well," no perfectly balanced three-part sentences, no flattery openers. `/voice-check` enforces it.
+- **Low volume by design.** At most 3 new people a day, 10 a week. At most 2 follow-ups per thread, then park it for 30 days. Never two similar messages to two people at one company.
+- **The two-fact rule.** Every outbound message carries one fact that took real work to find, with the source cited so you can read it first, and one thing only you could say. Missing either, it does not go. Silence beats generic.
+- **You send everything.** Drafts land on your clipboard with a "before you send" checklist and slots you have to fill in your own words. The agents never send, never schedule, never create a Gmail draft.
+- **The voice gate.** Nothing drafted for you may read as AI-written. No em dashes, no "I hope this finds you well," no perfectly balanced three-part sentences, no flattery openers. `/voice-check` enforces it.
 
 ### 4.4 Silence is data
 
@@ -359,9 +359,9 @@ Issues and pull requests are welcome. Bug reports, wording fixes, and "this clai
 
 The most valuable contribution is a new skill. Each file in `.claude/commands/` is a short Markdown prompt: a `description` line in the frontmatter, an **Agent** line saying which of Coach, Scout, or Mark runs it, and a Task section. If you have built one that helped your own search, open a pull request with it. A few things to keep in mind:
 
-* **Keep it career-neutral.** Skills read `config/profile.md` for everything about the candidate. Nothing about a specific person, industry, or company belongs in a skill.
-* **Follow the playbook.** Warm path first, low outreach volume, a human in the loop on every message, and a Recruiter's read at the end. `config/recruiter_playbook.md` is the doctrine; a skill that fights it will not be merged.
-* **Never send.** Drafts go to the clipboard and the vault. No skill may send email, create Gmail drafts, or post anywhere on the candidate's behalf.
-* **Scrub before you push.** Check the diff for your own profile, wins, contacts, or vault notes. The `.gitignore` covers the usual paths, but a copied example can slip through.
+- **Keep it career-neutral.** Skills read `config/profile.md` for everything about the candidate. Nothing about a specific person, industry, or company belongs in a skill.
+- **Follow the playbook.** Warm path first, low outreach volume, a human in the loop on every message, and a Recruiter's read at the end. `config/recruiter_playbook.md` is the doctrine; a skill that fights it will not be merged.
+- **Never send.** Drafts go to the clipboard and the vault. No skill may send email, create Gmail drafts, or post anywhere on the candidate's behalf.
+- **Scrub before you push.** Check the diff for your own profile, wins, contacts, or vault notes. The `.gitignore` covers the usual paths, but a copied example can slip through.
 
 Say in the pull request what the skill is for, which agent runs it, and what it wrote to the vault when you ran it. MIT licensed, so contributions are too.
