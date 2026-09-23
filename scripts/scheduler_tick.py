@@ -13,11 +13,16 @@ Rules:
 from __future__ import annotations
 
 import argparse
-import fcntl
 import json
 import os
 import subprocess
 import sys
+
+if os.name == "nt":
+    import msvcrt
+else:
+    import fcntl
+
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
@@ -166,38 +171,69 @@ def daily_is_due(
         return False
     return True
 
+def scheduler_env(root: Path) -> dict[str, str]:
+    """Return an environment with the project's virtualenv first on PATH."""
+    env = os.environ.copy()
+    venv_bin = root / ".venv" / ("Scripts" if os.name == "nt" else "bin")
+    env["PATH"] = f"{venv_bin}{os.pathsep}{env.get('PATH', '')}"
+    return env
 
 def run_skill(root: Path, label: str, skill: str) -> int:
-    env = os.environ.copy()
-    env["PATH"] = f"{root / '.venv' / 'bin'}:{env.get('PATH', '')}"
+    runner = root / "scripts" / "jobfinderos_run_skill.py"
     return subprocess.run(
-        ["/bin/bash", str(root / "scripts" / "JobFinderOS_run_skill.sh"), label, skill],
+        [sys.executable, str(runner), label, skill],
         cwd=str(root),
-        env=env,
+        env=scheduler_env(root),
     ).returncode
-
 
 def run_watch_guards(root: Path) -> None:
     """Invoke the priority-function watch guard; self-skips when not due."""
-    env = os.environ.copy()
-    env["PATH"] = f"{root / '.venv' / 'bin'}:{env.get('PATH', '')}"
     subprocess.run(
-        [sys.executable, str(root / "scripts" / "jobfinderos_priority_watch.py")],
+        [
+            sys.executable,
+            str(root / "scripts" / "jobfinderos_priority_watch.py"),
+        ],
         cwd=str(root),
-        env=env,
+        env=scheduler_env(root),
     )
 
 
-def run_script(root: Path, script: str) -> int:
-    path = root / "scripts" / script
-    env = os.environ.copy()
-    env["PATH"] = f"{root / '.venv' / 'bin'}:{env.get('PATH', '')}"
-    return subprocess.run(
-        ["/bin/bash", str(path)],
-        cwd=str(root),
-        env=env,
-    ).returncode
+def acquire_lock(lock_fp) -> bool:
+    """Acquire a non-blocking scheduler lock on Windows or Unix."""
+    if os.name == "nt":
+        lock_fp.seek(0, os.SEEK_END)
+        if lock_fp.tell() == 0:
+            lock_fp.write(b"\0")
+            lock_fp.flush()
 
+        lock_fp.seek(0)
+        try:
+            msvcrt.locking(lock_fp.fileno(), msvcrt.LK_NBLCK, 1)
+            return True
+        except OSError:
+            return False
+
+    try:
+        fcntl.flock(lock_fp.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        return True
+    except BlockingIOError:
+        return False
+
+
+def release_lock(lock_fp) -> None:
+    """Release the scheduler lock."""
+    if os.name == "nt":
+        lock_fp.seek(0)
+        try:
+            msvcrt.locking(lock_fp.fileno(), msvcrt.LK_UNLCK, 1)
+        except OSError:
+            pass
+        return
+
+    try:
+        fcntl.flock(lock_fp.fileno(), fcntl.LOCK_UN)
+    except OSError:
+        pass
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="JobFinderOS scheduler tick")
@@ -208,12 +244,15 @@ def main() -> int:
     root = project_root()
     cfg_path = args.config or (root / "config" / "scheduler.yaml")
 
-    lock_fp = open(lock_path(), "a+", encoding="utf-8")
-    try:
-        fcntl.flock(lock_fp.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except BlockingIOError:
+    lock_fp = open(lock_path(), "a+b")
+    if not acquire_lock(lock_fp):
+
         append_run_log(root, "scheduler-tick", "skipped (lock held)")
-        print("scheduler_tick: another instance is running; exit 0", file=sys.stderr)
+        print(
+            "scheduler_tick: another instance is running; exit 0",
+            file=sys.stderr,
+        )
+        lock_fp.close()
         return 0
 
     try:
@@ -276,12 +315,8 @@ def main() -> int:
         run_watch_guards(root)
         return exit_rc
     finally:
-        try:
-            fcntl.flock(lock_fp.fileno(), fcntl.LOCK_UN)
-        except OSError:
-            pass
+        release_lock(lock_fp)
         lock_fp.close()
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
