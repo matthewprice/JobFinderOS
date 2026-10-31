@@ -1,0 +1,39 @@
+{
+  "_note": "Pinned 2026-10-31 from `claude -p --output-format json --json-schema ... --tools \"\" --permission-mode dontAsk --permission-prompts none --no-session-persistence --strict-mcp-config --max-budget-usd 0.05 --model sonnet` on Claude Code 2.1.314. `--bare` made the subprocess report 'Not logged in', so it is not used. Fields jfgraph/llm.py reads: result, structured_output, is_error, total_cost_usd, duration_ms, num_turns, session_id, usage.*, terminal_reason, permission_denials.",
+  "type": "result",
+  "subtype": "success",
+  "is_error": false,
+  "terminal_reason": "completed",
+  "stop_reason": "tool_use",
+  "result": "{\"answer\":\"ok\"}",
+  "structured_output": {"answer": "ok"},
+  "total_cost_usd": 0.013937999999999999,
+  "duration_ms": 1648,
+  "duration_api_ms": 1522,
+  "num_turns": 2,
+  "session_id": "61decd62-8e5a-4616-adc7-205197ae9490",
+  "uuid": "b6d83a60-9340-4b31-8bfa-f5cf8e6a4ee3",
+  "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 3351,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 53,
+    "output_tokens_details": {"thinking_tokens": 0},
+    "server_tool_use": {"web_search_requests": 0, "web_fetch_requests": 0},
+    "service_tier": "standard"
+  },
+  "modelUsage": {
+    "claude-sonnet-5-5": {
+      "inputTokens": 2, "outputTokens": 53, "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 3351, "webSearchRequests": 0,
+      "costUSD": 0.013937999999999999, "canonicalModel": "claude-sonnet-5-5"
+    }
+  },
+  "permission_denials": [],
+  "api_error_status": null,
+  "_error_sample": {
+    "type": "result", "subtype": "success", "is_error": true, "terminal_reason": "api_error",
+    "result": "Not logged in · Please run /login", "total_cost_usd": 0, "duration_ms": 41, "num_turns": 1,
+    "usage": {"input_tokens": 0, "output_tokens": 0, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0}
+  }
+}

@@ -42,16 +42,19 @@ def project_root() -> Path:
     return env
 
 
+def _state_dir() -> Path:
+    """``$JOBFINDEROS_STATE_DIR`` or ``~/.jobfinderos`` (see scripts/jfgraph/paths.py)."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from jfgraph.paths import state_dir
+    return state_dir()
+
+
 def state_path() -> Path:
-    d = Path.home() / ".jobfinderos"
-    d.mkdir(parents=True, exist_ok=True)
-    return d / STATE_FILENAME
+    return _state_dir() / STATE_FILENAME
 
 
 def lock_path() -> Path:
-    d = Path.home() / ".jobfinderos"
-    d.mkdir(parents=True, exist_ok=True)
-    return d / LOCK_FILENAME
+    return _state_dir() / LOCK_FILENAME
 
 
 def append_run_log(root: Path, label: str, phase: str) -> None:

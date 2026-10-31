@@ -6,6 +6,14 @@ config/voice.md
 config/targets.md
 config/stories.md
 config/ats_boards.yaml
+config/discovery.yaml
+
+# --- discovery simulations: fictional profiles, snapshots, labels, runs, raw reports stay private ---
+sim/profiles/
+sim/instances/
+sim/registry.yaml
+sim/discover_truth.yaml
+reports/
 
 # --- the vault is private by default: ignore everything, then allow the skeleton ---
 vault/**
