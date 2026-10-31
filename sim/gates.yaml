@@ -1,0 +1,36 @@
+# Acceptance gates for the discovery comparison (`sim compare`). Deltas are in absolute
+# points of the metric (0.15 = 15 points). "vs" names the graph a variant is judged against;
+# when the reference graph's own repeatability (Jaccard) is below baseline_noise_jaccard,
+# the gate is evaluated against both its mean and its best run and reports both.
+#
+# Precision and repeatability are gated on the ACT-NOW set (score >= thresholds.act): that is
+# what the candidate is asked to spend time on. The log band (score >= thresholds.log) is
+# reported beside it but not gated; a borderline posting logged for the weekly review is
+# not a false alarm in the same sense.
+baseline_noise_jaccard: 0.5
+
+gates:
+  G-B:
+    graph: B
+    vs: A
+    recall_delta_min: 0.15          # recall >= A + 15 points
+    act_precision_delta_min: -0.05  # act-now precision no more than 5 points below A
+    cost_per_tp_ratio_max: 0.5      # cost per true positive at most half of A's
+    act_jaccard_min: 0.85           # repeatability of B's act-now set across same-config runs (n/a with < 2 runs)
+  G-C:
+    graph: C
+    vs: B
+    recall_delta_min: 0.0           # the classifier must not lose recall; it only helps when the vocabulary is the problem
+    act_precision_delta_min: -0.03
+    cost_per_tp_ratio_max: 1.5
+    term_rejection_rate_max: 0.20   # share of learned terms a human rejected (n/a until reviewed)
+  G-D:
+    graph: D
+    vs: C
+    recall_delta_abs_max: 0.01      # the posting path must be unchanged
+    precision_delta_abs_max: 0.01
+    about_to_hire_hit_rate_min: 0.30
+  G-discover:
+    correct_rate_min: 0.80
+    wrong_board_rate_max: 0.02      # hard fail: a stranger's board under a target's name
+    mean_probes_max: 8

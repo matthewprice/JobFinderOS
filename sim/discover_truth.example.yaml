@@ -1,0 +1,34 @@
+# Ground truth for the board auto-discovery benchmark (`sim discover-bench`).
+# Copy to sim/discover_truth.yaml (gitignored) and extend. `ats: none` means the company
+# has no public Greenhouse / Ashby / Lever board, so "not_found" is the right answer.
+companies:
+  - {company: Stripe,      ats: greenhouse, slug: stripe}
+  - {company: Databricks,  ats: greenhouse, slug: databricks}
+  - {company: Cloudflare,  ats: greenhouse, slug: cloudflare}
+  - {company: Datadog,     ats: greenhouse, slug: datadog}
+  - {company: GitLab,      ats: greenhouse, slug: gitlab}
+  - {company: MongoDB,     ats: greenhouse, slug: mongodb}
+  - {company: Twilio,      ats: greenhouse, slug: twilio}
+  - {company: Vercel,      ats: greenhouse, slug: vercel}
+  - {company: Anthropic,   ats: greenhouse, slug: anthropic}
+  - {company: Scale AI,    ats: greenhouse, slug: scaleai}      # name has a space the slug drops
+  - {company: Samsara,     ats: greenhouse, slug: samsara}
+  - {company: Brex,        ats: greenhouse, slug: brex}
+  - {company: Elastic,     ats: greenhouse, slug: elastic}
+  - {company: Figma,       ats: greenhouse, slug: figma}
+  - {company: Notion,      ats: ashby,      slug: notion}
+  - {company: Ramp,        ats: ashby,      slug: ramp}
+  - {company: Linear,      ats: ashby,      slug: linear}        # generic word
+  - {company: OpenAI,      ats: ashby,      slug: openai}
+  - {company: Replit,      ats: ashby,      slug: replit}
+  - {company: Vanta,       ats: ashby,      slug: vanta}
+  - {company: Supabase,    ats: ashby,      slug: supabase}
+  - {company: Cursor,      ats: ashby,      slug: cursor}        # generic word; company is Anysphere
+  - {company: Modal,       ats: ashby,      slug: modal}         # generic word
+  - {company: ElevenLabs,  ats: ashby,      slug: elevenlabs}
+  - {company: Sierra,      ats: ashby,      slug: sierra}        # generic word
+  - {company: Harvey,      ats: ashby,      slug: harvey}        # a first name
+  - {company: Palantir,    ats: lever,      slug: palantir}
+  - {company: Spotify,     ats: lever,      slug: spotify}
+  - {company: Zoox,        ats: lever,      slug: zoox}
+  - {company: Netflix,     ats: none}                            # own careers site

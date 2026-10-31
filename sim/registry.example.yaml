@@ -1,0 +1,49 @@
+# Example simulation registry: real companies with public Greenhouse / Ashby / Lever
+# boards. Copy to sim/registry.yaml (gitignored) and trim to 20 to 25 that resolve.
+# `sim snapshot` reports any slug that returns 404 so you can fix or drop it.
+#
+# tier: "1" marks a priority company (hub-city-only postings still surface, flagged).
+boards:
+  # Greenhouse
+  - {company: Stripe,        ats: greenhouse, slug: stripe,       tier: "1"}
+  - {company: Databricks,    ats: greenhouse, slug: databricks,   tier: "1"}
+  - {company: Cloudflare,    ats: greenhouse, slug: cloudflare,   tier: "2"}
+  - {company: Datadog,       ats: greenhouse, slug: datadog,      tier: "2"}
+  - {company: GitLab,        ats: greenhouse, slug: gitlab,       tier: "2"}
+  - {company: MongoDB,       ats: greenhouse, slug: mongodb,      tier: "2"}
+  - {company: Twilio,        ats: greenhouse, slug: twilio,       tier: "2"}
+  - {company: Vercel,        ats: greenhouse, slug: vercel,       tier: "1"}
+  - {company: Anthropic,     ats: greenhouse, slug: anthropic,    tier: "1"}
+  - {company: Scale AI,      ats: greenhouse, slug: scaleai,      tier: "2"}
+  - {company: Samsara,       ats: greenhouse, slug: samsara,      tier: "2"}
+  - {company: Rippling,      ats: greenhouse, slug: rippling,     tier: "2"}
+  - {company: Brex,          ats: greenhouse, slug: brex,         tier: "2"}
+  - {company: Discord,       ats: greenhouse, slug: discord,      tier: "2"}
+  - {company: Elastic,       ats: greenhouse, slug: elastic,      tier: "2"}
+  - {company: Okta,          ats: greenhouse, slug: okta,         tier: "2"}
+  - {company: Figma,         ats: greenhouse, slug: figma,        tier: "2"}
+  - {company: dbt Labs,      ats: greenhouse, slug: dbtlabsinc,   tier: "2"}
+  - {company: Snyk,          ats: greenhouse, slug: snyk,         tier: "2"}
+  # Ashby
+  - {company: Notion,        ats: ashby,      slug: notion,       tier: "1"}
+  - {company: Ramp,          ats: ashby,      slug: ramp,         tier: "2"}
+  - {company: Linear,        ats: ashby,      slug: linear,       tier: "2"}
+  - {company: OpenAI,        ats: ashby,      slug: openai,       tier: "1"}
+  - {company: Replit,        ats: ashby,      slug: replit,       tier: "1"}
+  - {company: Vanta,         ats: ashby,      slug: vanta,        tier: "2"}
+  - {company: Supabase,      ats: ashby,      slug: supabase,     tier: "2"}
+  - {company: PostHog,       ats: ashby,      slug: posthog,      tier: "2"}
+  - {company: Deel,          ats: ashby,      slug: deel,         tier: "2"}
+  - {company: Mercury,       ats: ashby,      slug: mercury,      tier: "2"}
+  - {company: Cursor,        ats: ashby,      slug: cursor,       tier: "1"}
+  - {company: Modal,         ats: ashby,      slug: modal,        tier: "2"}
+  - {company: ElevenLabs,    ats: ashby,      slug: elevenlabs,   tier: "2"}
+  - {company: Sierra,        ats: ashby,      slug: sierra,       tier: "2"}
+  - {company: Harvey,        ats: ashby,      slug: harvey,       tier: "2"}
+  - {company: Glean,         ats: ashby,      slug: glean,        tier: "2"}
+  # Lever
+  - {company: Palantir,      ats: lever,      slug: palantir,     tier: "2"}
+  - {company: Netflix,       ats: lever,      slug: netflix,      tier: "2"}
+  - {company: Spotify,       ats: lever,      slug: spotify,      tier: "2"}
+  - {company: Plaid,         ats: lever,      slug: plaid,        tier: "2"}
+  - {company: Zoox,          ats: lever,      slug: zoox,         tier: "2"}
