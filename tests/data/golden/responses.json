@@ -1,0 +1,34 @@
+{
+  "https://boards-api.greenhouse.io/v1/boards/acme/jobs": {
+    "jobs": [
+      {"id": 101, "title": "Head of Solutions Engineering", "location": {"name": "Remote - US"}, "absolute_url": "https://boards.greenhouse.io/acme/jobs/101", "updated_at": "2026-10-20T10:00:00-05:00"},
+      {"id": 102, "title": "Senior Solutions Engineer", "location": {"name": "Austin, TX"}, "absolute_url": "https://boards.greenhouse.io/acme/jobs/102", "updated_at": "2026-10-21T10:00:00-05:00"},
+      {"id": 103, "title": "Director, Sales Engineering", "location": {"name": "San Francisco, CA"}, "absolute_url": "https://boards.greenhouse.io/acme/jobs/103", "updated_at": "2026-10-22T10:00:00-05:00"},
+      {"id": 104, "title": "Manager, Forward Deployed Engineering", "location": {"name": "Austin, TX"}, "absolute_url": "https://boards.greenhouse.io/acme/jobs/104", "updated_at": "2026-10-23T10:00:00-05:00"},
+      {"id": 105, "title": "Principal Solutions Engineer, Manager Track", "location": {"name": "Remote"}, "absolute_url": "https://boards.greenhouse.io/acme/jobs/105", "updated_at": "2026-10-24T10:00:00-05:00"},
+      {"id": 106, "title": "VP Sales Engineering", "location": {"name": "London, UK"}, "absolute_url": "https://boards.greenhouse.io/acme/jobs/106", "updated_at": "2026-10-25T10:00:00-05:00"},
+      {"id": 107, "title": "Director of Marketing", "location": {"name": "Remote"}, "absolute_url": "https://boards.greenhouse.io/acme/jobs/107", "updated_at": "2026-10-26T10:00:00-05:00"},
+      {"id": 108, "title": "Head of Forward Deployed Engineering", "location": {"name": "New York, NY (Remote)"}, "absolute_url": "https://boards.greenhouse.io/acme/jobs/108", "updated_at": "2026-10-27T10:00:00-05:00"}
+    ]
+  },
+  "https://boards-api.greenhouse.io/v1/boards/acme/jobs/101": {"id": 101, "content": "<p>Lead our solutions engineering org.</p><p>The base salary range is $230,000 - $270,000 plus equity.</p>"},
+  "https://boards-api.greenhouse.io/v1/boards/acme/jobs/103": {"id": 103, "content": "<p>Acme raised $500 million in funding last year. This role pays a base of $240,000.</p>"},
+  "https://boards-api.greenhouse.io/v1/boards/acme/jobs/104": {"id": 104, "content": "<p>Build the forward deployed engineering team from zero. Competitive compensation.</p>"},
+  "https://boards-api.greenhouse.io/v1/boards/acme/jobs/108": {"id": 108, "content": "<p>Salary: $150,000 - $170,000.</p>"},
+
+  "https://api.ashbyhq.com/posting-api/job-board/bolt?includeCompensation=true": {
+    "jobs": [
+      {"id": "a1", "title": "Director of Customer Engineering", "location": "Seattle, WA", "isRemote": false, "jobUrl": "https://jobs.ashbyhq.com/bolt/a1", "publishedAt": "2026-10-20T00:00:00Z", "descriptionPlain": "Run customer engineering in Seattle."},
+      {"id": "a2", "title": "Head of Sales Engineering", "location": "United States", "isRemote": true, "jobUrl": "https://jobs.ashbyhq.com/bolt/a2", "publishedAt": "2026-10-21T00:00:00Z", "compensation": {"compensationTierSummary": "$210K – $250K"}, "descriptionPlain": "Own the SE org."},
+      {"id": "a3", "title": "Sales Engineering Manager", "location": "", "isRemote": true, "jobUrl": "https://jobs.ashbyhq.com/bolt/a3", "publishedAt": "2026-10-22T00:00:00Z", "descriptionPlain": "Manage a pod of SEs."},
+      {"id": "a4", "title": "Manager, Solutions Engineering", "location": "Toronto, Canada", "isRemote": true, "jobUrl": "https://jobs.ashbyhq.com/bolt/a4", "publishedAt": "2026-10-23T00:00:00Z", "descriptionPlain": "Canada-based team."}
+    ]
+  },
+
+  "https://api.lever.co/v0/postings/cue?mode=json": [
+    {"id": "l1", "text": "Head of Forward Deployed Engineering", "categories": {"location": "Remote - North America"}, "hostedUrl": "https://jobs.lever.co/cue/l1", "createdAt": 1761000000000, "descriptionPlain": "You will build the FDE function. Compensation: $205,000 to $245,000 base."},
+    {"id": "l2", "text": "Director, Solutions Engineering", "categories": {"location": "Austin, Texas or Remote"}, "hostedUrl": "https://jobs.lever.co/cue/l2", "createdAt": 1761100000000, "descriptionPlain": "Base salary $180,000 - $190,000."},
+    {"id": "l3", "text": "Solutions Engineering Manager", "categories": {"location": "Denver, CO"}, "hostedUrl": "https://jobs.lever.co/cue/l3", "createdAt": 1761200000000, "descriptionPlain": "In-office in Denver."},
+    {"id": "l4", "text": "General Manager, Sales Engineering", "categories": {"location": "Chicago, IL; Remote"}, "hostedUrl": "https://jobs.lever.co/cue/l4", "createdAt": 1761300000000, "descriptionPlain": "Lead the Chicago SE business."}
+  ]
+}

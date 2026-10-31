@@ -1,0 +1,278 @@
+# Generated from the original jobfinderos_ats_poll.py with tests/data/golden/boards.yaml filters.
+titles:
+- title: Head of Solutions Engineering
+  ok: true
+  lane: B
+- title: Senior Solutions Engineer
+  ok: false
+  lane: ''
+- title: Director, Sales Engineering
+  ok: true
+  lane: B
+- title: Manager, Forward Deployed Engineering
+  ok: true
+  lane: A
+- title: Principal Solutions Engineer, Manager Track
+  ok: false
+  lane: ''
+- title: VP Sales Engineering
+  ok: true
+  lane: B
+- title: Director of Marketing
+  ok: false
+  lane: ''
+- title: Head of Forward Deployed Engineering
+  ok: true
+  lane: A
+- title: Staff Sales Engineer
+  ok: false
+  lane: ''
+- title: Staff Director, Sales Engineering
+  ok: true
+  lane: B
+- title: Sales Engineering Manager
+  ok: true
+  lane: B
+- title: General Manager, Sales Engineering
+  ok: true
+  lane: B
+- title: GM, Customer Engineering
+  ok: true
+  lane: B
+- title: Chief Customer Engineering Officer
+  ok: true
+  lane: B
+- title: Dir. Solutions Engineering
+  ok: true
+  lane: B
+- title: Mgr. Forward Deployed
+  ok: true
+  lane: A
+- title: Solutions Engineering Lead
+  ok: false
+  lane: ''
+- title: Head Chef
+  ok: false
+  lane: ''
+- title: ''
+  ok: false
+  lane: ''
+- title: Forward Deployed Engineer
+  ok: false
+  lane: ''
+- title: Individual Contributor, Solutions Engineering Manager
+  ok: false
+  lane: ''
+- title: SVP Sales Engineering
+  ok: true
+  lane: B
+- title: Vice President, Customer Engineering
+  ok: true
+  lane: B
+- title: Headcount Planning Manager, Sales Engineering
+  ok: true
+  lane: B
+- title: Director of Forward Deployed Engineering and Solutions
+  ok: true
+  lane: A
+- title: manager sales engineering
+  ok: true
+  lane: B
+- title: Senior Manager, Solutions Engineering
+  ok: true
+  lane: B
+- title: Engineering Manager
+  ok: false
+  lane: ''
+- title: Sales Engineer II
+  ok: false
+  lane: ''
+- title: Director, Solutions Architecture
+  ok: false
+  lane: ''
+locations:
+- location: Remote - US
+  tier: '1'
+  cls: clean
+  reason: remote-first listing
+- location: Austin, TX
+  tier: '2'
+  cls: clean
+  reason: Austin/TX listed
+- location: San Francisco, CA
+  tier: '1'
+  cls: hub_flag
+  reason: hub-based at a Tier-1 - relocation, deprioritized
+- location: San Francisco, CA
+  tier: '2'
+  cls: drop
+  reason: hub-only at a non-Tier-1
+- location: Remote
+  tier: '2'
+  cls: clean
+  reason: remote-first listing
+- location: London, UK
+  tier: '1'
+  cls: drop
+  reason: international only
+- location: New York, NY (Remote)
+  tier: '2'
+  cls: hub_flag
+  reason: remote flag on a hub city - verify remote scope
+- location: Seattle, WA
+  tier: '2'
+  cls: drop
+  reason: hub-only at a non-Tier-1
+- location: United States
+  tier: '2'
+  cls: clean
+  reason: US, no city constraint
+- location: United States (Remote)
+  tier: '2'
+  cls: clean
+  reason: remote-US
+- location: (Remote)
+  tier: '2'
+  cls: clean
+  reason: remote-US
+- location: Toronto, Canada (Remote)
+  tier: '1'
+  cls: drop
+  reason: international only
+- location: Remote - North America
+  tier: '2'
+  cls: clean
+  reason: remote-first listing
+- location: Austin, Texas or Remote
+  tier: '2'
+  cls: clean
+  reason: Austin/TX listed
+- location: Denver, CO
+  tier: '2'
+  cls: drop
+  reason: hub-only at a non-Tier-1
+- location: Chicago, IL; Remote
+  tier: '2'
+  cls: hub_flag
+  reason: remote flag on a hub city - verify remote scope
+- location: ''
+  tier: '1'
+  cls: hub_flag
+  reason: no location listed - verify
+- location: Munich, Germany (Remote)
+  tier: '1'
+  cls: drop
+  reason: international only
+- location: Remote - California
+  tier: '2'
+  cls: clean
+  reason: remote-first listing
+- location: Foster City, CA (Remote)
+  tier: '1'
+  cls: hub_flag
+  reason: remote flag on a hub city - verify remote scope
+- location: USA
+  tier: '2'
+  cls: clean
+  reason: US, no city constraint
+- location: US
+  tier: '2'
+  cls: clean
+  reason: US, no city constraint
+- location: Boston, MA | New York, NY
+  tier: '2'
+  cls: drop
+  reason: hub-only at a non-Tier-1
+- location: Dallas, TX
+  tier: '2'
+  cls: clean
+  reason: Austin/TX listed
+- location: Remote (EMEA)
+  tier: '2'
+  cls: drop
+  reason: international only
+- location: Anywhere in the US
+  tier: '2'
+  cls: hub_flag
+  reason: location unclear - verify
+- location: Washington, DC
+  tier: '1'
+  cls: hub_flag
+  reason: hub-based at a Tier-1 - relocation, deprioritized
+- location: Portland, OR
+  tier: '2'
+  cls: hub_flag
+  reason: location unclear - verify
+- location: Fully Remote
+  tier: '2'
+  cls: clean
+  reason: remote-first listing
+- location: Remote, United States
+  tier: '2'
+  cls: clean
+  reason: remote-first listing
+- location: Hybrid - Austin
+  tier: '2'
+  cls: clean
+  reason: Austin/TX listed
+- location: Singapore
+  tier: '2'
+  cls: drop
+  reason: international only
+- location: New York / Remote US
+  tier: '2'
+  cls: hub_flag
+  reason: remote flag on a hub city - verify remote scope
+- location: Atlanta, GA or Austin, TX
+  tier: '2'
+  cls: clean
+  reason: Austin/TX listed
+comps:
+- text: ''
+  status: unverified
+  range: ''
+- text: The base salary range is $230,000 - $270,000 plus equity.
+  status: clear
+  range: $230,000-$270,000 (mid $250,000)
+- text: Acme raised $500 million in funding. Base of $240,000.
+  status: clear
+  range: $240,000
+- text: Competitive compensation.
+  status: unverified
+  range: ''
+- text: 'Salary: $150,000 - $170,000.'
+  status: under
+  range: $150,000-$170,000 (mid $160,000)
+- text: $210K – $250K
+  status: clear
+  range: $210,000-$250,000 (mid $230,000)
+- text: $205,000 to $245,000 base
+  status: clear
+  range: $205,000-$245,000 (mid $225,000)
+- text: $180,000 - $190,000
+  status: under
+  range: $180,000-$190,000 (mid $185,000)
+- text: $8.3B valuation; OTE $300k
+  status: clear
+  range: $300,000
+- text: $500 bonus
+  status: unverified
+  range: ''
+- text: Up to $1,900,000 in total compensation
+  status: clear
+  range: $1,900,000
+- text: $2,500,000 is above band
+  status: unverified
+  range: ''
+- text: $199,999-$200,001
+  status: clear
+  range: $199,999-$200,001 (mid $200,000)
+- text: $95k-$110k base plus $120k variable
+  status: under
+  range: $95,000-$120,000 (mid $107,500)
+- text: 'Range: $200,000.'
+  status: clear
+  range: $200,000
+- text: $ 220,000 - $ 260,000
+  status: clear
+  range: $220,000-$260,000 (mid $240,000)

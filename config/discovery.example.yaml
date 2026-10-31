@@ -1,0 +1,70 @@
+# JobFinderOS — discovery graph settings (scripts/jobfinderos_discover.py, scripts/jfgraph/).
+# Copy to config/discovery.yaml (gitignored) and edit. The runner falls back to this
+# example file if no copy exists. Board registry and title/location/comp filters live
+# in config/ats_boards.yaml; this file holds everything the graph adds on top.
+
+# Which preset to run live. A = today's LLM scout (baseline only), B = poller-first +
+# board auto-discovery, C = B + responsibility classifier, D = C + hiring signals.
+graph: B
+
+# Score thresholds, used by the scout, the digest, and the inbox writer alike.
+thresholds:
+  log: 5        # write an opportunity note at or above this score
+  act: 7        # act-now: human-path stub, Dashboard 🎯 Now
+
+# Deterministic gate rules.
+gates:
+  comp_rule: top        # top = drop only when even the top of a posted range is below the floor (default;
+                        # measured +4 true positives of 17 on the benchmark profile);
+                        # midpoint = the original poller rule, the range's midpoint must clear the floor
+
+# Enhancement 1: find a company's board from its name and enroll it automatically.
+discover:
+  enabled: true
+  ats: [greenhouse, ashby, lever]   # smartrecruiters is supported; workday is not (POST endpoint, 3-part slug)
+  max_slugs: 6                      # slug variants tried per company per ATS
+  auto_enroll_min: 0.8              # name-match confidence needed to enroll without review
+  ambiguous_min: 0.5                # between this and auto_enroll_min -> Discovery Review.md checkbox
+  default_tier: "2"                 # handoff priority_now companies enroll as tier "1"
+  sources: [profile_table, handoff, digests, web_sweep]
+
+web_sweep:
+  enabled: true                     # one WebSearch-backed LLM call per run for companies not in the registry
+  max_results: 15
+
+# Enhancement 2: postings that pass the seniority gate but miss the function regex get
+# their description read and classified against the profile's role prose.
+classifier:
+  enabled: true
+  max_per_run: 60                   # near misses classified per run; the rest wait for the next run
+  batch: 20                         # postings per classifier call
+  max_budget_usd: 1.00              # per call; a batch of 20 with 1,500-char descriptions runs about $0.25
+  description_chars: 1500
+  hint_terms: ""                    # optional regex; near misses whose title matches go first when over the cap
+  min_companies: 2                  # a learned title term is accepted after this many distinct companies...
+  require_review: false             # ...or only after a human ticks it in Discovery Review.md
+
+# Enhancement 3: hiring-signal score per company; high scorers are promoted to tier 1.
+signals:
+  enabled: true
+  half_life_days: 45
+  promote_threshold: 5.0
+  promote_ttl_days: 90
+  weights: {funding: 3, exec_hire: 4, buildout: 3, rename: 2, first_posting: 3, layoff: -4}
+
+review:
+  note: "Market Intel/Discovery Review.md"   # relative to the vault
+  block_on_pending: false                     # true = a run with unanswered review items stops and waits
+
+concurrency:
+  http_workers: 4
+  llm_workers: 3
+  throttle_seconds: 0.4             # minimum gap between requests to the same ATS host
+
+llm:
+  model: sonnet
+  max_budget_usd: 0.50              # per call, structured calls
+  timeout_seconds: 600
+  max_live_calls: 0                 # 0 = unlimited (live). Simulations default to 5 per run.
+  score_batch: 20                   # postings per scoring call
+  scout_budget_usd: 4.0             # Graph A baseline only: budget for one /jobs-scout run

@@ -1,0 +1,127 @@
+{
+ "survivors_after_title_location": [
+  "acme:101",
+  "acme:103",
+  "acme:104",
+  "acme:108",
+  "bolt:a2",
+  "bolt:a3",
+  "cue:l1",
+  "cue:l2",
+  "cue:l4"
+ ],
+ "survivors_after_comp": [
+  {
+   "req_id": "acme:101",
+   "company": "Acme",
+   "ats": "greenhouse",
+   "title": "Head of Solutions Engineering",
+   "location": "Remote - US",
+   "lane": "B",
+   "location_class": "clean",
+   "location_reason": "remote-first listing",
+   "comp_status": "clear",
+   "comp_range": "$230,000-$270,000 (mid $250,000)",
+   "url": "https://boards.greenhouse.io/acme/jobs/101"
+  },
+  {
+   "req_id": "acme:103",
+   "company": "Acme",
+   "ats": "greenhouse",
+   "title": "Director, Sales Engineering",
+   "location": "San Francisco, CA",
+   "lane": "B",
+   "location_class": "hub_flag",
+   "location_reason": "hub-based at a Tier-1 - relocation, deprioritized",
+   "comp_status": "clear",
+   "comp_range": "$240,000",
+   "url": "https://boards.greenhouse.io/acme/jobs/103"
+  },
+  {
+   "req_id": "acme:104",
+   "company": "Acme",
+   "ats": "greenhouse",
+   "title": "Manager, Forward Deployed Engineering",
+   "location": "Austin, TX",
+   "lane": "A",
+   "location_class": "clean",
+   "location_reason": "Austin/TX listed",
+   "comp_status": "unverified",
+   "comp_range": "",
+   "url": "https://boards.greenhouse.io/acme/jobs/104"
+  },
+  {
+   "req_id": "bolt:a2",
+   "company": "Bolt",
+   "ats": "ashby",
+   "title": "Head of Sales Engineering",
+   "location": "United States (Remote)",
+   "lane": "B",
+   "location_class": "clean",
+   "location_reason": "remote-US",
+   "comp_status": "clear",
+   "comp_range": "$210,000-$250,000 (mid $230,000)",
+   "url": "https://jobs.ashbyhq.com/bolt/a2"
+  },
+  {
+   "req_id": "bolt:a3",
+   "company": "Bolt",
+   "ats": "ashby",
+   "title": "Sales Engineering Manager",
+   "location": "(Remote)",
+   "lane": "B",
+   "location_class": "clean",
+   "location_reason": "remote-US",
+   "comp_status": "unverified",
+   "comp_range": "",
+   "url": "https://jobs.ashbyhq.com/bolt/a3"
+  },
+  {
+   "req_id": "cue:l1",
+   "company": "Cue",
+   "ats": "lever",
+   "title": "Head of Forward Deployed Engineering",
+   "location": "Remote - North America",
+   "lane": "A",
+   "location_class": "clean",
+   "location_reason": "remote-first listing",
+   "comp_status": "clear",
+   "comp_range": "$205,000-$245,000 (mid $225,000)",
+   "url": "https://jobs.lever.co/cue/l1"
+  },
+  {
+   "req_id": "cue:l4",
+   "company": "Cue",
+   "ats": "lever",
+   "title": "General Manager, Sales Engineering",
+   "location": "Chicago, IL; Remote",
+   "lane": "B",
+   "location_class": "hub_flag",
+   "location_reason": "remote flag on a hub city - verify remote scope",
+   "comp_status": "unverified",
+   "comp_range": "",
+   "url": "https://jobs.lever.co/cue/l4"
+  }
+ ],
+ "problems": [
+  "Dud: no fetcher for ats=workday"
+ ],
+ "inbox_entries": [
+  "### Acme — Head of Solutions Engineering\n- **Status:** unscored\n- **Location:** Remote - US — clean\n- **Comp:** $230,000-$270,000 (mid $250,000)\n- **Lane:** Lane B (SE leadership)\n- **ATS:** greenhouse · req `acme:101`\n- **Posting:** https://boards.greenhouse.io/acme/jobs/101\n- **Found:** <ts>\n\n",
+  "### Acme — Director, Sales Engineering\n- **Status:** unscored\n- **Location:** San Francisco, CA — ⚠️ hub-based at a Tier-1 - relocation, deprioritized\n- **Comp:** $240,000\n- **Lane:** Lane B (SE leadership)\n- **ATS:** greenhouse · req `acme:103`\n- **Posting:** https://boards.greenhouse.io/acme/jobs/103\n- **Found:** <ts>\n\n",
+  "### Acme — Manager, Forward Deployed Engineering\n- **Status:** unscored\n- **Location:** Austin, TX — clean\n- **Comp:** not posted — **comp unverified**\n- **Lane:** Lane A (Forward deployed)\n- **ATS:** greenhouse · req `acme:104`\n- **Posting:** https://boards.greenhouse.io/acme/jobs/104\n- **Found:** <ts>\n\n",
+  "### Bolt — Head of Sales Engineering\n- **Status:** unscored\n- **Location:** United States (Remote) — clean\n- **Comp:** $210,000-$250,000 (mid $230,000)\n- **Lane:** Lane B (SE leadership)\n- **ATS:** ashby · req `bolt:a2`\n- **Posting:** https://jobs.ashbyhq.com/bolt/a2\n- **Found:** <ts>\n\n",
+  "### Bolt — Sales Engineering Manager\n- **Status:** unscored\n- **Location:** (Remote) — clean\n- **Comp:** not posted — **comp unverified**\n- **Lane:** Lane B (SE leadership)\n- **ATS:** ashby · req `bolt:a3`\n- **Posting:** https://jobs.ashbyhq.com/bolt/a3\n- **Found:** <ts>\n\n",
+  "### Cue — Head of Forward Deployed Engineering\n- **Status:** unscored\n- **Location:** Remote - North America — clean\n- **Comp:** $205,000-$245,000 (mid $225,000)\n- **Lane:** Lane A (Forward deployed)\n- **ATS:** lever · req `cue:l1`\n- **Posting:** https://jobs.lever.co/cue/l1\n- **Found:** <ts>\n\n",
+  "### Cue — General Manager, Sales Engineering\n- **Status:** unscored\n- **Location:** Chicago, IL; Remote — ⚠️ remote flag on a hub city - verify remote scope\n- **Comp:** not posted — **comp unverified**\n- **Lane:** Lane B (SE leadership)\n- **ATS:** lever · req `cue:l4`\n- **Posting:** https://jobs.lever.co/cue/l4\n- **Found:** <ts>\n\n"
+ ],
+ "http_calls": [
+  "https://api.ashbyhq.com/posting-api/job-board/bolt?includeCompensation=true",
+  "https://api.lever.co/v0/postings/cue?mode=json",
+  "https://boards-api.greenhouse.io/v1/boards/acme/jobs",
+  "https://boards-api.greenhouse.io/v1/boards/acme/jobs/101",
+  "https://boards-api.greenhouse.io/v1/boards/acme/jobs/103",
+  "https://boards-api.greenhouse.io/v1/boards/acme/jobs/104",
+  "https://boards-api.greenhouse.io/v1/boards/acme/jobs/108"
+ ]
+}

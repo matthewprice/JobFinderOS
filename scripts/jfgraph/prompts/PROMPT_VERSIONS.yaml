@@ -1,0 +1,6 @@
+# Prompt name -> version. Bump a version when a prompt's wording changes; the version is
+# part of every LLM cache key, so old recordings stop being replayed for the new prompt.
+label_ground_truth: "1"
+classify_responsibility: "1"
+score_posting: "1"
+web_sweep: "1"

@@ -1,0 +1,10 @@
+[
+  {"when": "req_id: acme:107", "response": {"verdicts": [
+    {"req_id": "acme:107", "fit": "yes", "function_noun": "marketing", "title_term": "Marketing", "confidence": 0.9, "evidence": "test rule: treats the golden near miss as a fit"},
+    {"req_id": "dune:950", "fit": "yes", "function_noun": "marketing", "title_term": "Director of Marketing", "confidence": 0.8, "evidence": "second company with the same term"},
+    {"req_id": "dune:951", "fit": "no", "function_noun": "recruiting", "title_term": "Recruiting", "confidence": 0.95, "evidence": "hires people, does not sell"}]}},
+  {"when": "### acme:107", "response": {"verdicts": [
+    {"req_id": "acme:107", "fit": "yes", "function_noun": "marketing", "title_term": "Marketing", "confidence": 0.9, "evidence": "test rule: treats the golden near miss as a fit"},
+    {"req_id": "dune:950", "fit": "yes", "function_noun": "marketing", "title_term": "Director of Marketing", "confidence": 0.8, "evidence": "second company with the same term"},
+    {"req_id": "dune:951", "fit": "no", "function_noun": "recruiting", "title_term": "Recruiting", "confidence": 0.95, "evidence": "hires people, does not sell"}]}}
+]

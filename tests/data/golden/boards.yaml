@@ -1,0 +1,23 @@
+# Golden fixture registry + filters for the poller-parity test (tests/test_poller_parity.py).
+# Fictional companies; the board JSON lives in responses.json keyed by URL.
+filters:
+  timezone: "America/Chicago"
+  min_comp: 200000
+  leadership_only: true
+  seniority_terms: "head\\s+of|head|vp|svp|evp|vice\\s+president|chief|director|dir\\.?|manager|mgr\\.?|general\\s+manager|gm"
+  function_terms: "sales\\s+engineering|solutions\\s+engineering|forward\\s+deployed|customer\\s+engineering"
+  priority_function_terms: "forward\\s+deployed"
+  ic_override_terms: "staff|principal|individual\\s+contributor"
+  home_region_terms: "austin|texas|\\btx\\b"
+  home_region_label: "Austin/TX"
+  lane_labels:
+    A: "Forward deployed"
+    B: "SE leadership"
+  user_agent: "JobFinderOS-Test/1.0"
+
+boards:
+  - {company: Acme, ats: greenhouse, slug: acme, tier: 1}
+  - {company: Bolt, ats: ashby, slug: bolt, tier: 2}
+  - {company: Cue, ats: lever, slug: cue, tier: 2}
+  - {company: Dud, ats: workday, slug: dud, tier: 2}
+  - {company: "Off", ats: greenhouse, slug: "off", tier: 2, enabled: false}   # quoted: bare Off/On/Yes/No are YAML booleans
