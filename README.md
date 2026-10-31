@@ -115,11 +115,16 @@ When it finishes you have four private files, all gitignored:
 
 ### Step 4. Run the first scan
 
+```bash
+cp config/ats_boards.example.yaml config/ats_boards.yaml   # your boards and filters (or let /onboard fill it)
+python3 scripts/jobfinderos_discover.py                    # fetch, filter, classify, score -> vault/Market Intel/ATS Inbox.md
+```
+then, in Claude Code:
 ```
 /jobs-scout
 ```
 
-Scout reads your target companies' careers pages, scores what it finds, and writes an opportunity note for anything that clears your bar. Open `vault/` and read `Dashboard.md`. You are running.
+Discovery is deterministic code: it reads every registered board directly, finds boards for companies you only named, applies your seniority, location, and comp rules, reads the descriptions of titles your search terms would miss, and scores what survives against your rubric. The scout then writes an opportunity note for anything that clears your bar. Open `vault/` and read `Dashboard.md`. You are running. (Why not let the model crawl? It was measured: `docs/discovery-benchmark.md`.)
 
 ### Optional extras
 
@@ -230,7 +235,7 @@ The rule behind this is in Section 4.2. Short version: find a human first, apply
 
 ### The rest
 
-`/mark-pulse`, `/jobs-scout`, `/jobs-email`, and `/jobs-digest` are the pieces `/jobs-daily` is made of. Run them alone when you want one piece. `/mark-weekly` is the weekly brief and Strategy pass, `/email-watch` is a read-only inbox briefing, and `/jobs-priority-watch` is the narrow weekday scan the scheduler runs.
+`/mark-pulse`, `python3 scripts/jobfinderos_discover.py`, `/jobs-scout`, `/jobs-email`, and `/jobs-digest` are the pieces `/jobs-daily` is made of, in that order. Run them alone when you want one piece. `/mark-weekly` is the weekly brief and Strategy pass, `/email-watch` is a read-only inbox briefing, and `/jobs-priority-watch` is the narrow weekday scan the scheduler runs.
 
 ### Reading the vault
 
@@ -328,8 +333,10 @@ Daily digests, run summaries, and daily briefs keep 30 days. Weekly briefs keep 
 ```bash
 python3 scripts/scheduler_tick.py --dry-run                   # what would run right now
 python3 scripts/jobfinderos_run_skill.py jobs-daily jobs-daily # run one skill through the portable runner
+python3 scripts/jobfinderos_discover.py --dry-run             # the discovery graph: decisions only, no writes
 bash scripts/JobFinderOS_check_local_runner.sh                # is Claude Code reachable from launchd?
-tail -f logs/launchd-runs.log                                 # watch runs
+tail -f logs/launchd-runs.log                                 # watch runs (each line now carries tokens and estimated cost)
+python3 -m unittest discover -s tests -t .                    # the test suite, no tokens spent
 ```
 
 **Windows PowerShell**

@@ -7,7 +7,8 @@
   <key>ProgramArguments</key>
   <array>
     <string>__PYTHON__</string>
-    <string>__REPO__/scripts/jobfinderos_ats_poll.py</string>
+    <string>__REPO__/scripts/jobfinderos_discover.py</string>
+    <string>--shadow</string>
   </array>
   <key>WorkingDirectory</key>
   <string>__REPO__</string>
@@ -18,13 +19,15 @@
   </dict>
   <key>StartCalendarInterval</key>
   <array>
-    <!-- Weekday morning sweep, shortly before the daily digest window in
-         config/scheduler.yaml, so the fresh ATS Inbox is there for it to score. -->
-    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>12</integer></dict>
-    <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>12</integer></dict>
-    <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>12</integer></dict>
-    <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>12</integer></dict>
-    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>12</integer></dict>
+    <!-- Weekday morning discovery run (the graph: fetch, filter, classify, score), 30 minutes
+         BEFORE the daily window in config/scheduler.yaml (default 07:00) so /jobs-daily finds
+         today's ATS Inbox block. /jobs-daily also runs discovery itself; this run is insurance
+         and the shadow flag keeps it from notifying twice. -->
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>
     <!-- Midday insurance run: catches the morning sweep if the Mac was asleep at 07:12. -->
     <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>12</integer><key>Minute</key><integer>20</integer></dict>
     <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>12</integer><key>Minute</key><integer>20</integer></dict>

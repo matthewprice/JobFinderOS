@@ -18,12 +18,14 @@ Safety rails:
   * The NEWEST file in each rule group is always kept, however old - the skills
     read "the most recent" digest/pulse, and a stalled pipeline must not lose
     its only copy.
-  * Deletions are committed on their own and pushed (same HTTPS/keychain flow
-    as jobfinderos_ats_poll.py). --dry-run prints, touches nothing.
+  * Deletions are committed on their own, locally. Nothing is pulled or pushed
+    unless --push is given: automation never pushes on its own (CLAUDE.md), and
+    the repo may be public. --dry-run prints, touches nothing.
 
 Flags:
   --dry-run   print what would be deleted, change nothing
-  --no-push   delete + commit, but skip the push (local testing)
+  --push      after committing, pull --rebase and push origin main (opt-in)
+  --no-push   accepted for compatibility; it is the default now
 """
 
 from __future__ import annotations
@@ -133,7 +135,8 @@ def append_run_log(n: int) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--no-push", action="store_true")
+    ap.add_argument("--push", action="store_true", help="opt in: pull --rebase then push the deletion commit")
+    ap.add_argument("--no-push", action="store_true", help="compatibility no-op; not pushing is the default")
     args = ap.parse_args()
 
     today = now().date()
@@ -146,9 +149,10 @@ def main() -> int:
         log(f"DRY RUN - {len(doomed)} file(s) would be deleted")
         return 0
 
-    pull = git("pull", "--rebase", "--autostash", "origin", "main")
-    if pull.returncode != 0:
-        log(f"WARN: pull failed, continuing: {pull.stderr.strip()[:200]}")
+    if args.push:
+        pull = git("pull", "--rebase", "--autostash", "origin", "main")
+        if pull.returncode != 0:
+            log(f"WARN: pull failed, continuing: {pull.stderr.strip()[:200]}")
 
     for p in doomed:
         try:
@@ -167,8 +171,8 @@ def main() -> int:
     if c.returncode != 0:
         log(f"WARN: commit failed: {c.stderr.strip()[:200]}")
         return 1
-    if args.no_push:
-        log(f"committed {len(doomed)} deletions (push skipped)")
+    if not args.push:
+        log(f"committed {len(doomed)} deletions locally (pass --push to publish)")
         return 0
     p = git("push", "origin", "main")
     if p.returncode != 0:

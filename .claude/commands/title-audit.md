@@ -16,8 +16,12 @@ Input: an optional plain-English description of the function. If none, derive it
 ### Step 1 — Describe the function, not the title
 Two title-free lines on what the job does. This is the search key; every match below is on responsibilities, never on the title the candidate currently uses.
 
-### Step 2 — Pull 15 to 25 real postings, direct
-Careers pages and ATS boards from the profile's URL table, never aggregators: every Tier 1 company with an open req in the function, a sample of Tier 2 and watch companies, and 3 to 5 un-indexed companies visibly hiring in the space (`WebSearch` on responsibility phrases from the profile's keyword set, e.g. `"<duty phrase>" "<duty phrase>" site:jobs.ashbyhq.com`). Capture per posting: exact title · level word · function noun · modifier · company · URL · date · leadership seat or not. Match on the responsibilities paragraph; a posting the candidate would never have searched but whose duties are their job is the point. Flag those. Do not filter the *sample* by the profile's seniority or comp rules (IC postings still tell you what the function is called); filter only the *recommendations*.
+### Step 2 — Start from the near-miss log, then fill gaps direct
+The discovery graph already does the expensive part daily. Read, from the state dir (`$JOBFINDEROS_STATE_DIR` or `~/.jobfinderos`):
+- `near_misses.jsonl`: every posting of the last 90 days that passed the seniority rule but not the function terms, with the classifier's verdict (`fit`), the `title_term` it extracted, and its evidence. The `fit: yes` rows are the "postings you would have missed".
+- `learned_terms.yaml`: terms already `proposed` (one company), `accepted` (two or more, now part of the search regex), or `rejected`.
+
+Only if that log holds fewer than 15 postings in the function, sample live: careers pages and ATS boards from the profile's URL table, never aggregators, plus 3 to 5 un-indexed companies visibly hiring in the space (`WebSearch` on responsibility phrases, e.g. `"<duty phrase>" "<duty phrase>" site:jobs.ashbyhq.com`). Capture per posting: exact title · level word · function noun · modifier · company · URL · date · leadership seat or not. Match on the responsibilities paragraph. Do not filter the *sample* by the profile's seniority or comp rules; filter only the *recommendations*.
 
 ### Step 3 — Tally
 Term (normalized, level words stripped) · count · companies · first seen (from Market Intel history if known) · trend, only with evidence. Group synonyms; note which modifier is winning. **Threshold: 3 or more distinct companies** before a term is recommended as an add.
@@ -32,7 +36,7 @@ Classify: **ADD** (market uses it, candidate doesn't) · **KEEP** · **RETIRE** 
 ### Step 5 — Write `vault/Market Intel/Title Audit — <YYYY-MM-DD>.md`
 Tag line, Navigation, function audited, sample size. Sections: What the market calls it (table) · Postings you would have missed (title as posted, company, why it's your job, link) · Diff against your searches (term, scout, LinkedIn prefs, headline, action) · **Paste list** (one exact term per line, leadership forms first) · Saved-search terms (quoted) · Headline note (which terms the headline should carry; a recommendation, no prose drafted) · Recruiter's read · Next audit due (monthly in an active search, or on a Market Intel naming signal).
 
-With the candidate's yes, update `config/profile.md` → Role titles to search (adds and retires) so the scout inherits it. One line in `vault/Strategy.md` → Decision log per change.
+With the candidate's yes, update `config/profile.md` → Role titles to search (adds and retires) so the scout inherits it, and set each term's `status` in `learned_terms.yaml` (`accepted` for an ADD, `rejected` for a term the candidate declines) so the deterministic title gate inherits it too. One line in `vault/Strategy.md` → Decision log per change.
 
 ### Recruiter's read (required)
 Is the function being renamed, and how far along is it? Which surface is the biggest blind spot? Is there a lane the vocabulary reveals that the candidate isn't targeting? The single term to add today.

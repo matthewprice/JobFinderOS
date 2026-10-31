@@ -11,9 +11,11 @@ Scheduled work runs **on your Mac**, writes directly to **`vault/`** on disk (Ob
 ```
 launchd (com.jobfinderos.scheduler)
   → scheduler_tick.py (every ~30 min while awake)
-    → JobFinderOS_run_skill.sh (daily / weekly when due)
+    → jobfinderos_run_skill.py (daily / weekly when due)
     → jobfinderos_priority_watch.py (each tick)
-      → claude -p /skill → vault/
+      → claude -p /skill (explicit tools, acceptEdits, JSON output) → vault/
+          /jobs-daily runs `python3 scripts/jobfinderos_discover.py` (the discovery graph)
+          before the scout; com.jobfinderos.atspoll runs it early as insurance
 ```
 
 Logs: `logs/launchd-runs.log`, `logs/scheduler-cron/*.last-success`, mirror in [[JobFinderOS — Schedule & Run Log]] when allowed.
@@ -22,8 +24,8 @@ Logs: `logs/launchd-runs.log`, `logs/scheduler-cron/*.last-success`, mirror in [
 
 | Job | Entrypoint | Skill | Window (timezone in `config/scheduler.yaml`) |
 |-----|------------|-------|----------------------------------------------|
-| Daily Jobs | `scheduler_tick` → `JobFinderOS_run_skill.sh` | `/jobs-daily` | After `daily.hour` (default 7:00) |
-| Weekly Mark | `scheduler_tick` → `JobFinderOS_run_skill.sh` | `/mark-weekly` | `weekly.weekday` after `weekly.hour` (default Monday 8:00). Weekly wins: daily is skipped that day |
+| Daily Jobs | `scheduler_tick` → `jobfinderos_run_skill.py` | `/jobs-daily` | After `daily.hour` (default 7:00) |
+| Weekly Mark | `scheduler_tick` → `jobfinderos_run_skill.py` | `/mark-weekly` | `weekly.weekday` after `weekly.hour` (default Monday 8:00). Weekly wins: daily is skipped that day |
 | Priority watch | `jobfinderos_priority_watch.py` each tick | `/jobs-priority-watch` | Weekdays after `watch.hour` (default 9:00) |
 
 Install or refresh:
@@ -41,9 +43,9 @@ JOBS_DAILY_HOUR=7 MARK_WEEKLY_WEEKDAY=1 WATCH_HOUR=9 JOBFINDEROS_TZ=America/New_
 |-------|------|---------|
 | `com.jobfinderos.latest` | `jobfinderos_update_latest.py`: rewrites the dated pointer notes at the vault root | On any write to the digest folders |
 | `com.jobfinderos.prune` | `jobfinderos_prune_history.py`: 30-day retention for digests/pulses/watches, 90 for weekly briefs | Weekly |
-| `com.jobfinderos.atspoll` | `jobfinderos_ats_poll.py`: deterministic direct-ATS sweep → `Market Intel/ATS Inbox.md` | Per the template's calendar interval |
+| `com.jobfinderos.atspoll` | `jobfinderos_discover.py --shadow`: the discovery graph (fetch, discover boards, filter, classify, score) → `Market Intel/ATS Inbox.md`, no notifications | Weekdays 06:30 and 12:20 |
 
-The poller needs `config/ats_boards.yaml` (copy the example, edit `filters:`, run `--seed` once). Its stdout/stderr go to `~/.jobfinderos/logs/`, not the repo, because launchd cannot write under `~/Documents` without Full Disk Access.
+Discovery needs `config/ats_boards.yaml` (copy the example, edit `filters:`; `python3 scripts/jobfinderos_ats_poll.py --seed` once if you do not want the current backlog surfaced) and reads `config/discovery.yaml` (copy the example; graph preset, thresholds, classifier, signals). State (seen-set, learned terms, discovery cache, run checkpoints, LLM cache) lives in `$JOBFINDEROS_STATE_DIR` (default `~/.jobfinderos`). Its stdout/stderr go to `~/.jobfinderos/logs/`, not the repo, because launchd cannot write under `~/Documents` without Full Disk Access. Items that need a human (an ambiguous board, a learned title term) land in `Market Intel/Discovery Review.md`; tick the box and the next run picks it up.
 
 ## Prerequisites
 
@@ -56,13 +58,16 @@ The poller needs `config/ats_boards.yaml` (copy the example, edit `filters:`, ru
 
 ```bash
 bash scripts/JobFinderOS_check_local_runner.sh
-bash scripts/JobFinderOS_run_skill.sh jobs-daily jobs-daily
+python3 scripts/jobfinderos_run_skill.py jobs-daily jobs-daily
 python3 scripts/scheduler_tick.py --dry-run
 python3 scripts/scheduler_tick.py
 bash scripts/verify_local_automation.sh
 bash scripts/JobFinderOS_test_launchd.sh
 python3 scripts/jobfinderos_priority_watch.py     # standalone guard; JSON on stdout
-python3 scripts/jobfinderos_ats_poll.py --dry-run
+python3 scripts/jobfinderos_discover.py --dry-run # the discovery graph, decisions only
+python3 scripts/jobfinderos_discover.py --weekly  # also writes Market Intel/About to Hire — <date>.md
+python3 scripts/jobfinderos_ats_poll.py --dry-run # the poller preset alone
+python3 -m unittest discover -s tests -t .        # the test suite (no tokens)
 ```
 
 ## Failure triage

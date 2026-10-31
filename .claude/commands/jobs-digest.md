@@ -11,11 +11,12 @@ description: Compile the morning briefing (new opportunities, recruiter emails t
 ### Always read first
 - `config/recruiter_playbook.md` (§1, §2, §4), `config/profile.md`, `config/scoring_rubric.md`
 - `vault/Dashboard.md`, `vault/Strategy.md`, `vault/Tracking/Companies.md`, `vault/Tracking/Email Follow-ups Queue.md`, `vault/Tracking/Contacts.md`
-- Recent `vault/Archive/Daily Jobs Watch/` entries and today's `vault/Market Intel/` notes
+- Recent `vault/Archive/Daily Jobs Watch/` entries and today's `vault/Market Intel/` notes, including today's block in `ATS Inbox.md` (scored by the discovery graph) and any open items in `Market Intel/Discovery Review.md`
+- `config/discovery.yaml` (or the example) for the `thresholds`
 - Gmail (`search_threads`) for activity since the last digest
 
 ### Output
-1. Write `vault/Daily Digests/<today>.md` using the Daily Digest template in `CLAUDE.md`: New Opportunities (scored at or above the act-on-it threshold), Recruiter Emails to Review, Application Updates, Action Items (prioritized checkboxes). Reference today's Market Pulse with a wikilink at the top when it affects priorities. Lead the candidate to their **highest-value 1 to 3 actions**, and close with the **Recruiter's read**.
+1. Write `vault/Daily Digests/<today>.md` using the Daily Digest template in `CLAUDE.md`: New Opportunities (inbox entries scored at or above `thresholds.act`, with the scout's human-path answer where one exists), Recruiter Emails to Review, Application Updates, Action Items (prioritized checkboxes; include one for each unanswered `Discovery Review` item). Reference today's Market Pulse with a wikilink at the top when it affects priorities. Lead the candidate to their **highest-value 1 to 3 actions**, and close with the **Recruiter's read**.
 2. **Warm-path coverage check.** For each active application, check Contacts.md for a logged human at that company. Add a **"Warm-path gaps"** line listing active applications with none, and point to `/warm-path <Company>` for each. Goal: every meaningful application has a human attached or an explicit note that none exists.
 3. Update `vault/Archive/Daily Jobs Watch/Daily Jobs Watch — <today>.md` with the executive summary.
 4. **Scoped Dashboard refresh.** Edit only the mechanical parts of `vault/Dashboard.md`: the `> Updated:` line and funnel pulse counts, `🗓️ Scheduled`, `🎯 Now` (insert today's top actions, remove done ones), `🔴 Live human threads` states, `📬 Applications` ages and statuses per silence norms §4. Do not rewrite `👀 Priority watch` rationale or anything hand-written. Never touch `Strategy.md`. If nothing changed, bump the date only.

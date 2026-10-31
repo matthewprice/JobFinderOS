@@ -1,5 +1,5 @@
 ---
-description: Priority-function watch. Narrow, fast ATS-direct scan of the profile's priority companies for the function the profile marks as priority, honoring its seniority filter. Vault-only, silent when nothing is new. Weekday scheduled watch. No email.
+description: Priority-function watch. Reads today's discovery results for the function the profile marks as priority at the companies it marks as priority, honoring the seniority filter. Vault-only, silent when nothing is new. Weekday scheduled watch. No fetching, no email.
 ---
 
 **Agent:** `scout` · delegated batch work.
@@ -8,19 +8,21 @@ description: Priority-function watch. Narrow, fast ATS-direct scan of the profil
 
 ## Task
 
-A narrow, fast watch for the function the profile marks as priority, at the companies the profile marks as priority. It runs every weekday tick, so it must be quiet when there is nothing to say.
+A narrow watch for the function the profile marks as priority, at the companies the profile marks as priority. It runs every weekday tick, so it must be quiet when there is nothing to say. The fetching is already done: `scripts/jobfinderos_discover.py` runs before the daily routine and again at midday, and every posting it surfaces carries a Lane (Lane A is the priority function) and the company's tier.
 
 ### Always read first
-- `config/profile.md`: the priority function and its title vocabulary, the seniority filter, the **priority companies** section, the **watch companies** section, the most-wanted product category if one is named, comp floor, location rules, exclusions, and the direct ATS URL table
-- `config/scoring_rubric.md`
+- `config/profile.md`: the priority function, the seniority filter, the **priority companies** and **watch companies** sections, the most-wanted product category if one is named, exclusions
+- `config/discovery.yaml` (or the example) for the `thresholds`
+- `vault/Market Intel/ATS Inbox.md`: the blocks dated today and yesterday
 - `vault/Companies/` so nothing is re-alerted
 
 ### Steps
-1. `WebFetch` each priority and watch company's own careers page or ATS from the profile's URL table. No aggregators.
-2. Look only for roles that match the priority function's vocabulary **and** pass the seniority filter. If the profile says leadership only, IC titles do not surface (log and skip); a founding or team-build mandate counts as leadership even at a Manager title.
-3. Score new roles with the rubric (the priority function scores top marks on role fit; apply the comp, location, and any flagged-company rules).
-4. **Nothing new:** stop. Write no files, no summary.
-5. **New roles:** create or update opportunity notes per the template in `CLAUDE.md` (Stage `🔍 Spotted`, score, flags). For roles at or above the act-on-it threshold, stub the human path in Key Contacts (Contacts.md check, likely hiring manager). Append a line to `vault/Archive/Daily Jobs Watch/Daily Jobs Watch — <today>.md` and surface any top-scoring find into `vault/Dashboard.md` `🎯 Now`.
+1. If there is no inbox block for today, run `python3 scripts/jobfinderos_discover.py --shadow` with Bash (it is deterministic and quick when nothing is new), then read the inbox again. If that fails, stop and report the failure; do not fetch boards by hand.
+2. From today's block, keep entries that are **Lane A** (the priority function) **and** at a priority or watch company (match the company name against the profile's lists), or in the most-wanted product category. The graph already applied the seniority filter; if a Manager title is marked borderline on scope, read the posting: a founding or team-build mandate counts as leadership.
+3. Drop anything that already has an opportunity note.
+4. **Nothing left:** stop. Write no files, no summary; return "nothing new".
+5. **New roles:** create or update opportunity notes per the template in `CLAUDE.md` (Stage `🔍 Spotted`, the inbox's score and rationale, flags). For roles at or above the act-on-it threshold, stub the human path in Key Contacts (Contacts.md check, likely hiring manager). Append a line to `vault/Archive/Daily Jobs Watch/Daily Jobs Watch — <today>.md` and surface any top-scoring find into `vault/Dashboard.md` `🎯 Now`.
 
 ### Rules
 - No email, no outreach, no git. Honor every exclusion.
+- Never crawl: the watch reads what discovery found. The only fetch allowed is the discovery script itself.

@@ -21,7 +21,8 @@ description: Market pulse. Scan the target cohort for funding, leadership moves,
    - `### Companies tracked this cycle`
 4. Write `vault/Market Intel/Market Pulse — <today>.md`: 6 to 8 ranked signals, each with sources. The brief is the summary; the pulse is the research backing.
 5. Update `vault/Market Intel/Jobs Handoff.json` (`priority_now`, `new_to_evaluate`, `apply_queue_status`).
-6. End with the **Recruiter's read**.
+6. Append one JSON line per signal found in step 2 to `vault/Market Intel/Signals.jsonl` (create the file if missing; never rewrite it). Shape: `{"date": "YYYY-MM-DD", "company": "<name as the employer writes it>", "type": "funding|exec_hire|buildout|rename|layoff", "strength": 0.5-1.0, "source_url": "<primary source>", "note": "<one line>"}`. The discovery graph (`scripts/jobfinderos_discover.py`) scores these per company, promotes hot companies to tier 1 in the board registry, and writes the weekly `About to Hire` note. A signal you do not log here does not move the registry.
+7. End with the **Recruiter's read**.
 
 ### Rules
 - Inline clickable URLs, not footnotes. Honor the excluded-profile filter and the profile's flagged exceptions.

@@ -24,17 +24,59 @@ def append_run_log(root: Path, label: str, phase: str) -> None:
         f" — {label} — {phase}\n"
     )
 
-    log = root / "logs" / "launchd-runs.log"
+    log = log_dir(root) / "launchd-runs.log"
     log.parent.mkdir(parents=True, exist_ok=True)
     with open(log, "a", encoding="utf-8") as file:
         file.write(line)
 
+    if os.environ.get("JOBFINDEROS_LOG_DIR"):
+        return      # a redirected log (tests, ad-hoc runs) never touches the vault mirror
     vault_log = root / "vault" / "Automation" / "JobFinderOS — Schedule & Run Log.md"
     try:
         with open(vault_log, "a", encoding="utf-8") as file:
             file.write(line)
     except OSError:
         pass
+
+
+def log_dir(root: Path) -> Path:
+    """logs/ under the repo, or $JOBFINDEROS_LOG_DIR when set."""
+    configured = os.environ.get("JOBFINDEROS_LOG_DIR")
+    return Path(configured).expanduser() if configured else root / "logs"
+
+
+def record_result(root: Path, label: str, stdout: str, stderr: str) -> dict:
+    """Save the skill's text to logs/skills/ and pull tokens + estimated cost out of the
+    CLI's JSON result (see tests/data/claude_result_sample.json for the shape)."""
+    import json
+
+    stamp = datetime.now().strftime("%Y%m%dT%H%M%S")
+    out_dir = log_dir(root) / "skills"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    usage: dict = {}
+    text = stdout or ""
+    try:
+        payload = json.loads(text.strip() or "{}")
+    except ValueError:
+        payload = {}
+    if isinstance(payload, dict) and "result" in payload:
+        text = str(payload.get("result") or "")
+        u = payload.get("usage") or {}
+        usage = {
+            "is_error": bool(payload.get("is_error")),
+            "error": str(payload.get("terminal_reason") or "") if payload.get("is_error") else "",
+            "cost_usd": float(payload.get("total_cost_usd") or 0.0),
+            "input_tokens": int(u.get("input_tokens") or 0) + int(u.get("cache_read_input_tokens") or 0) + int(u.get("cache_creation_input_tokens") or 0),
+            "output_tokens": int(u.get("output_tokens") or 0),
+            "num_turns": int(payload.get("num_turns") or 0),
+        }
+        usage["summary"] = (f"est. ${usage['cost_usd']:.2f}, {usage['input_tokens']} in / {usage['output_tokens']} out tokens, "
+                            f"{usage['num_turns']} turns")
+    with open(out_dir / f"{stamp}-{label}.txt", "w", encoding="utf-8") as fh:
+        fh.write(text)
+        if stderr:
+            fh.write("\n\n--- stderr ---\n" + stderr)
+    return usage
 
 
 def find_claude() -> str | None:
@@ -104,13 +146,22 @@ def main() -> int:
     path_entries.append(env.get("PATH", ""))
     env["PATH"] = os.pathsep.join(path_entries)
 
+    # Explicit tools and a permission mode instead of --dangerously-skip-permissions: a
+    # scheduled run reads untrusted web pages and email with nobody watching. acceptEdits
+    # lets the skill write the vault; anything outside the allowed tools is refused.
     command = [
         claude_bin,
         "-p",
         f"/{skill}",
+        "--output-format",
+        "json",
         "--allowedTools",
         allowed_tools,
-        "--dangerously-skip-permissions",
+        "--permission-mode",
+        os.environ.get("JOBFINDEROS_PERMISSION_MODE", "acceptEdits"),
+        "--permission-prompts",
+        "none",
+        "--no-session-persistence",
     ]
 
     append_run_log(root, label, "start")
@@ -121,6 +172,8 @@ def main() -> int:
             cwd=root,
             env=env,
             stdin=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
             timeout=timeout_sec,
             check=False,
         )
@@ -132,15 +185,17 @@ def main() -> int:
         print(f"JobFinderOS_run_skill: {exc}", file=sys.stderr)
         return 127
 
-    if result.returncode != 0:
+    usage = record_result(root, label, result.stdout, result.stderr)
+
+    if result.returncode != 0 or usage.get("is_error"):
         append_run_log(
             root,
             label,
-            f"failed (exit {result.returncode})",
+            f"failed (exit {result.returncode}{', ' + usage['error'] if usage.get('error') else ''})",
         )
-        return result.returncode
+        return result.returncode or 1
 
-    append_run_log(root, label, "completed")
+    append_run_log(root, label, f"completed ({usage.get('summary', 'no usage data')})")
 
     fixer = root / "scripts" / "jobfinderos_fix_backslash_paths.py"
     subprocess.run(

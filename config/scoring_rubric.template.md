@@ -37,9 +37,11 @@ score = Σ (dimension_score × dimension_weight)
 ```
 
 ## Action Thresholds
+The numbers live in `config/discovery.yaml` (`thresholds.log`, `thresholds.act`; defaults 5 and 7) so the
+discovery graph, the scout, and the digest all use the same two lines.
+
 | Score | Action |
 |-------|--------|
-| 8–10 | High priority — feature in the daily digest, generate tailored outreach |
-| 6–7 | Watch — log in the vault, include in weekly review |
-| 4–5 | Low signal — log only |
-| < 4 | Discard |
+| 7–10 | Act — feature in the daily digest, human-path stub, outreach before applying |
+| 5–6 | Log — opportunity note in the vault, included in the weekly review |
+| < 5 | Discard |

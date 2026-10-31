@@ -20,8 +20,13 @@ JobFinderOS/
 │   ├── *.template.md          ← The public templates /onboard fills in
 │   ├── recruiter_playbook.md  ← Operating doctrine: warm-path-first, authenticity, silence norms, funnel math
 │   ├── scheduler.yaml         ← Daily/weekly/watch due times, timezone (installer-generated)
-│   └── ats_boards.example.yaml← Board registry + filters for the deterministic ATS poller
-├── scripts/                   ← launchd scheduler, guards, poller, retention pruner, pointer-note writer
+│   ├── ats_boards.example.yaml← Board registry + filters for the discovery graph (copy to ats_boards.yaml)
+│   └── discovery.example.yaml ← Graph preset, thresholds, classifier, signals (copy to discovery.yaml)
+├── scripts/                   ← scheduler, guards, jobfinderos_discover.py (the discovery graph), pruner, pointer-note writer
+│   └── jfgraph/               ← The graph runtime and nodes (deterministic gates, discovery, classifier, scoring, signals)
+├── sim/                       ← Simulation protocol for measuring discovery (fictional profiles; private instances gitignored)
+├── docs/discovery-benchmark.md← Published comparison of the graph against the old LLM scout
+├── tests/                     ← unittest suite; token-free via tests/fake_claude.py
 ├── vault/                     ← Obsidian vault (open with Obsidian). PRIVATE by default (gitignored except the skeleton)
 │   ├── Dashboard.md           ← THE daily read: funnel pulse, plays, live threads, aged apps
 │   ├── Strategy.md            ← THE weekly read: positioning, objection log, funnel history, deadline math
@@ -205,17 +210,19 @@ Stages: `🔍 Spotted` → `📝 Applied` → `📞 Screen` → `🧑‍💼 HM 
 
 ## Agent run model — Claude Code (no API keys)
 
-Everything runs through Claude Code with subscription auth. Scheduled automation is **macOS launchd** → `scripts/scheduler_tick.py` → `scripts/JobFinderOS_run_skill.sh` → `claude -p /skill-name` → writes `vault/` on disk. See `vault/Automation/JobFinderOS — Local Runbook.md`.
+Everything runs through Claude Code with subscription auth. Scheduled automation is **macOS launchd** (or Windows Task Scheduler) → `scripts/scheduler_tick.py` → `scripts/jobfinderos_run_skill.py` (or the bash runner) → `claude -p /skill-name` with explicit tools and a permission mode, never `--dangerously-skip-permissions` → writes `vault/` on disk. See `vault/Automation/JobFinderOS — Local Runbook.md`.
+
+**Discovery is a deterministic graph, not an LLM crawl.** `scripts/jobfinderos_discover.py` (package `scripts/jfgraph/`) fetches every registered board directly, finds boards for newly named companies, filters on title, location, and comp, classifies near misses by their responsibilities, scores with the rubric, and appends today's block to `vault/Market Intel/ATS Inbox.md`. The scout writes opportunity notes from that block; it does not fetch. Settings: `config/ats_boards.yaml` (boards and filters) and `config/discovery.yaml` (graph preset, thresholds, classifier, signals). The measured comparison against the old scout is in `docs/discovery-benchmark.md`; the simulation protocol in `sim/README.md`.
 
 **Three agents, one doctrine.** Personas live in `.claude/agents/` as Claude Code project subagents; each file holds the persona, its doctrine, tool access, and model. Skills are thin task prompts that name their agent in the first line:
 
 | Agent | Job | Tools / model | Skills |
 |-------|-----|---------------|--------|
 | `coach` | The recruiter brain: judgment, people, prep, drafting, losses | All tools incl. Gmail (read + clipboard only); inherits the session model | checkin, whats-next, postmortem, story, jobs-prep, mock-interview, day-of-card, jobs-cover, draft-message, network-outreach, warm-path, voice-check, profile; jobs-email, email-watch, jobs-digest (delegated) |
-| `scout` | The crawler: ATS-direct scanning, scoring, opportunity notes, the watch | Web + vault, no Gmail; Sonnet | jobs-scout, jobs-priority-watch (delegated) |
+| `scout` | The writer behind discovery: opportunity notes and human-path stubs from the scored ATS Inbox, the watch | Web + vault, no Gmail; Sonnet | jobs-scout, jobs-priority-watch (delegated) |
 | `mark` | The market analyst: signals, renames, briefs, deep-dives, the handoff | Web + vault, no Gmail; Sonnet | mark-pulse, mark-weekly, mark-profiler, jobs-research (delegated); title-audit (in session) |
 
-**Delegated** skills spawn their agent via the Agent tool (separate context, restricted tools) and relay the report; if the Agent tool is unavailable they read the agent file and run inline. **In-session** skills are conversations and read the agent file for persona and doctrine. `/jobs-daily` is the orchestrator: pulse and scout in parallel, then email, then digest, then one consolidated Recruiter's read.
+**Delegated** skills spawn their agent via the Agent tool (separate context, restricted tools) and relay the report; if the Agent tool is unavailable they read the agent file and run inline. **In-session** skills are conversations and read the agent file for persona and doctrine. `/jobs-daily` is the orchestrator: pulse, then the discovery graph, then the scout as writer, then email, then digest, then one consolidated Recruiter's read.
 
 **Skills** (`.claude/commands/*.md`):
 
@@ -250,7 +257,7 @@ Everything runs through Claude Code with subscription auth. Scheduled automation
 | Weekly Mark | tick, once per week after the weekly slot (weekly wins over daily that day) | `mark-weekly` |
 | Priority watch | `jobfinderos_priority_watch.py` each tick, weekdays after the watch time | `jobs-priority-watch` |
 
-Optional helpers, installed by `scripts/JobFinderOS_install_helpers.sh`: the deterministic ATS poller (`jobfinderos_ats_poll.py`, writes `vault/Market Intel/ATS Inbox.md`), the retention pruner, and the pointer-note writer.
+Optional helpers, installed by `scripts/JobFinderOS_install_helpers.sh`: an early-morning discovery run (`jobfinderos_discover.py --shadow`, so today's ATS Inbox block exists before `/jobs-daily`), the retention pruner, and the pointer-note writer. `jobfinderos_ats_poll.py` remains as a thin shim over the graph's `poller` preset.
 
 All searching goes **directly to company careers pages and ATS boards** (URL table in `config/profile.md`), never aggregators.
 
