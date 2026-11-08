@@ -48,3 +48,41 @@ logs/
 .claude/settings.local.json
 .claude/worktrees/
 .obsidian/
+
+# --- Python tooling and test artifacts ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyright/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+
+# --- Python build artifacts ---
+build/
+dist/
+*.whl
+
+# --- temporary files and local logs ---
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# --- Windows artifacts ---
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# --- IDE-specific local state ---
+.idea/
+*.code-workspace
+
+# --- track environment templates ---
+!.env.example
+!.env.sample
